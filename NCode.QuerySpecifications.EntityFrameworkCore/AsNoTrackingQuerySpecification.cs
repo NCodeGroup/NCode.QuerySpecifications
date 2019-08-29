@@ -1,8 +1,10 @@
-﻿namespace NCode.QuerySpecifications.EntityFrameworkCore
+﻿using NCode.QuerySpecifications.Specifications;
+
+namespace NCode.QuerySpecifications.EntityFrameworkCore
 {
-	public class AsNoTrackingQuerySpecification<TEntity> : IQuerySpecification<TEntity>
+	public class AsNoTrackingQuerySpecification<TEntity> : QuerySpecificationBase<TEntity>
 		where TEntity : class
 	{
-		public string Name => EntityFrameworkCoreQueryNames.AsNoTracking;
+		public override string Name => EntityFrameworkCoreQueryNames.AsNoTracking;
 	}
 }

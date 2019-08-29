@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using NCode.QuerySpecifications.Provider.Pipes;
 
 namespace NCode.QuerySpecifications.Providers.EntityFrameworkCore
 {

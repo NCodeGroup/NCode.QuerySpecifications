@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NCode.QuerySpecifications.EntityFrameworkCore\NCode.QuerySpecifications.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="..\NCode.QuerySpecifications.Providers\NCode.QuerySpecifications.Providers.csproj" />
+    <ProjectReference Include="..\NCode.QuerySpecifications.Providers\NCode.QuerySpecifications.Provider.csproj" />
   </ItemGroup>
 
 </Project>
