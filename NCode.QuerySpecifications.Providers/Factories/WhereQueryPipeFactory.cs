@@ -10,7 +10,7 @@ namespace NCode.QuerySpecifications.Provider.Factories
         public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
             where TEntity : class
         {
-            if (specification is WhereQuerySpecification<TEntity> whereSpec)
+            if (specification is IWhereQuerySpecification<TEntity> whereSpec)
             {
                 queryPipe = new WhereQueryPipe<TEntity>(whereSpec.Expression);
                 return true;
