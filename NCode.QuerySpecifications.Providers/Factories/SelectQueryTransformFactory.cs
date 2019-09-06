@@ -13,7 +13,7 @@ namespace NCode.QuerySpecifications.Provider.Factories
         {
             if (specification is ITransformSpecification<TIn, TOut> transformSpec)
             {
-                transform = new SelectQueryTransform<TIn, TOut>(transformSpec.Expression);
+                transform = new SelectQueryTransform<TIn, TOut>(transformSpec.Selector);
                 return true;
             }
 

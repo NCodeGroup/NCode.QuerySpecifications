@@ -13,7 +13,7 @@ namespace NCode.QuerySpecifications.Specifications
     public interface IOrderByQuerySpecification<TEntity, TProperty> : IOrderByQuerySpecification<TEntity>
         where TEntity : class
     {
-        Expression<Func<TEntity, TProperty>> Expression { get; }
+        Expression<Func<TEntity, TProperty>> KeySelector { get; }
 
         IComparer<TProperty> Comparer { get; }
 

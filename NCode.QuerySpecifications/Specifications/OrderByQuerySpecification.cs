@@ -7,10 +7,10 @@ namespace NCode.QuerySpecifications.Specifications
     public class OrderByQuerySpecification<TEntity, TProperty> : IOrderByQuerySpecification<TEntity, TProperty>
         where TEntity : class
     {
-        public OrderByQuerySpecification(IReadOnlyList<IQuerySpecification<TEntity>> specifications, Expression<Func<TEntity, TProperty>> expression, IComparer<TProperty> comparer, bool @descending)
+        public OrderByQuerySpecification(IReadOnlyList<IQuerySpecification<TEntity>> specifications, Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer, bool @descending)
         {
             OutputSpecifications = specifications ?? throw new ArgumentNullException(nameof(specifications));
-            Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            KeySelector = keySelector ?? throw new ArgumentNullException(nameof(keySelector));
 
             Comparer = comparer;
             Descending = @descending;
@@ -22,7 +22,7 @@ namespace NCode.QuerySpecifications.Specifications
 
         public Type PropertyType => typeof(TProperty);
 
-        public Expression<Func<TEntity, TProperty>> Expression { get; }
+        public Expression<Func<TEntity, TProperty>> KeySelector { get; }
 
         public IComparer<TProperty> Comparer { get; }
 

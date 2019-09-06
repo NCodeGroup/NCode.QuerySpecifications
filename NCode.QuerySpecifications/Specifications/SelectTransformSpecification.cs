@@ -10,11 +10,11 @@ namespace NCode.QuerySpecifications.Specifications
     {
         public string Name => QueryNames.Select;
 
-        public Expression<Func<TIn, TOut>> Expression { get; }
+        public Expression<Func<TIn, TOut>> Selector { get; }
 
-        public SelectTransformSpecification(Expression<Func<TIn, TOut>> expression, IReadOnlyList<IQuerySpecification<TIn>> inputSpecifications, IReadOnlyList<IQuerySpecification<TOut>> outputSpecifications)
+        public SelectTransformSpecification(Expression<Func<TIn, TOut>> selector, IReadOnlyList<IQuerySpecification<TIn>> inputSpecifications, IReadOnlyList<IQuerySpecification<TOut>> outputSpecifications)
         {
-            Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            Selector = selector ?? throw new ArgumentNullException(nameof(selector));
             InputSpecifications = inputSpecifications ?? throw new ArgumentNullException(nameof(inputSpecifications));
             OutputSpecifications = outputSpecifications ?? throw new ArgumentNullException(nameof(outputSpecifications));
         }

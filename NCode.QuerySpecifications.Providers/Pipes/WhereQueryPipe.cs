@@ -7,16 +7,16 @@ namespace NCode.QuerySpecifications.Provider.Pipes
     public class WhereQueryPipe<TEntity> : IQueryPipe<TEntity>
         where TEntity : class
     {
-        private readonly Expression<Func<TEntity, bool>> _expression;
+        private readonly Expression<Func<TEntity, bool>> _predicate;
 
-        public WhereQueryPipe(Expression<Func<TEntity, bool>> expression)
+        public WhereQueryPipe(Expression<Func<TEntity, bool>> predicate)
         {
-            _expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            _predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
         }
 
         public virtual IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
         {
-            return queryRoot.Where(_expression);
+            return queryRoot.Where(_predicate);
         }
 
     }

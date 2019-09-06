@@ -12,7 +12,7 @@ namespace NCode.QuerySpecifications.Provider.Factories
         {
             if (specification is IWhereQuerySpecification<TEntity> whereSpec)
             {
-                queryPipe = new WhereQueryPipe<TEntity>(whereSpec.Expression);
+                queryPipe = new WhereQueryPipe<TEntity>(whereSpec.Predicate);
                 return true;
             }
 

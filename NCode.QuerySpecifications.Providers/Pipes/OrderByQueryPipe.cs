@@ -8,13 +8,13 @@ namespace NCode.QuerySpecifications.Provider.Pipes
     public class OrderByQueryPipe<TEntity, TProperty> : IQueryPipe<TEntity>
         where TEntity : class
     {
-        private readonly Expression<Func<TEntity, TProperty>> _expression;
+        private readonly Expression<Func<TEntity, TProperty>> _keySelector;
         private readonly IComparer<TProperty> _comparer;
         private readonly bool _descending;
 
-        public OrderByQueryPipe(Expression<Func<TEntity, TProperty>> expression, IComparer<TProperty> comparer, bool @descending)
+        public OrderByQueryPipe(Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer, bool @descending)
         {
-            _expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            _keySelector = keySelector ?? throw new ArgumentNullException(nameof(keySelector));
 
             _comparer = comparer;
             _descending = @descending;
@@ -26,20 +26,20 @@ namespace NCode.QuerySpecifications.Provider.Pipes
             {
                 return _descending
                     ? _comparer == null
-                        ? orderedQueryable.ThenByDescending(_expression)
-                        : orderedQueryable.ThenByDescending(_expression, _comparer)
+                        ? orderedQueryable.ThenByDescending(_keySelector)
+                        : orderedQueryable.ThenByDescending(_keySelector, _comparer)
                     : _comparer == null
-                        ? orderedQueryable.ThenBy(_expression)
-                        : orderedQueryable.ThenBy(_expression, _comparer);
+                        ? orderedQueryable.ThenBy(_keySelector)
+                        : orderedQueryable.ThenBy(_keySelector, _comparer);
             }
 
             return _descending
                 ? _comparer == null
-                    ? queryRoot.OrderByDescending(_expression)
-                    : queryRoot.OrderByDescending(_expression, _comparer)
+                    ? queryRoot.OrderByDescending(_keySelector)
+                    : queryRoot.OrderByDescending(_keySelector, _comparer)
                 : _comparer == null
-                    ? queryRoot.OrderBy(_expression)
-                    : queryRoot.OrderBy(_expression, _comparer);
+                    ? queryRoot.OrderBy(_keySelector)
+                    : queryRoot.OrderBy(_keySelector, _comparer);
         }
 
     }

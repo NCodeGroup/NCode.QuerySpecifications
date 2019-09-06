@@ -31,7 +31,7 @@ namespace NCode.QuerySpecifications.Provider.Factories
             {
                 if (specification is IOrderByQuerySpecification<TEntity, TProperty> orderBySpec)
                 {
-                    queryPipe = new OrderByQueryPipe<TEntity, TProperty>(orderBySpec.Expression, orderBySpec.Comparer, orderBySpec.Descending);
+                    queryPipe = new OrderByQueryPipe<TEntity, TProperty>(orderBySpec.KeySelector, orderBySpec.Comparer, orderBySpec.Descending);
                     return true;
                 }
 

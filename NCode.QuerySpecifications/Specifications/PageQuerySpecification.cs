@@ -1,7 +1,15 @@
 ﻿namespace NCode.QuerySpecifications.Specifications
 {
-    public class PageQuerySpecification<TEntity> : QuerySpecificationBase<TEntity>
-	    where TEntity : class
+	public interface IPageQuerySpecification<TEntity> : IQuerySpecification<TEntity>
+		where TEntity : class
+	{
+		int Skip { get; }
+
+		int Take { get; }
+	}
+
+	public class PageQuerySpecification<TEntity> : QuerySpecificationBase<TEntity>, IPageQuerySpecification<TEntity>
+		where TEntity : class
 	{
         public override string Name => QueryNames.Page;
 

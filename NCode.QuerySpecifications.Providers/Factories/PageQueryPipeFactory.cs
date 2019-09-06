@@ -10,7 +10,7 @@ namespace NCode.QuerySpecifications.Provider.Factories
         public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
             where TEntity : class
         {
-            if (specification is PageQuerySpecification<TEntity> pageSpec)
+            if (specification is IPageQuerySpecification<TEntity> pageSpec)
             {
                 queryPipe = new PageQueryPipe<TEntity>(pageSpec.Skip, pageSpec.Take);
                 return true;

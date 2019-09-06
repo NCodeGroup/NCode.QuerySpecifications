@@ -8,16 +8,16 @@ namespace NCode.QuerySpecifications.Provider.Transforms
         where TIn : class
         where TOut : class
     {
-        private readonly Expression<Func<TIn, TOut>> _expression;
+        private readonly Expression<Func<TIn, TOut>> _selector;
 
-        public SelectQueryTransform(Expression<Func<TIn, TOut>> expression)
+        public SelectQueryTransform(Expression<Func<TIn, TOut>> selector)
         {
-            _expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            _selector = selector ?? throw new ArgumentNullException(nameof(selector));
         }
 
         public virtual IQueryable<TOut> Apply(IQueryable<TIn> queryRoot)
         {
-            return queryRoot.Select(_expression);
+            return queryRoot.Select(_selector);
         }
 
     }

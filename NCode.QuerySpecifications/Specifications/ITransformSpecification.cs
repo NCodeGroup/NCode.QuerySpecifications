@@ -8,6 +8,6 @@ namespace NCode.QuerySpecifications.Specifications
         where TIn : class
         where TOut : class
     {
-        Expression<Func<TIn, TOut>> Expression { get; }
+        Expression<Func<TIn, TOut>> Selector { get; }
     }
 }
