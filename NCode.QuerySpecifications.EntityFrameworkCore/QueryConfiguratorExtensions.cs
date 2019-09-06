@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using NCode.QuerySpecifications.Configurators;
+using NCode.QuerySpecifications.EntityFrameworkCore.Configurators;
+using NCode.QuerySpecifications.EntityFrameworkCore.Specifications;
 
 namespace NCode.QuerySpecifications.EntityFrameworkCore
 {

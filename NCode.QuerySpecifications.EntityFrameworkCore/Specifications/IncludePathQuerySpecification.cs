@@ -1,7 +1,7 @@
 ﻿using System;
 using NCode.QuerySpecifications.Specifications;
 
-namespace NCode.QuerySpecifications.EntityFrameworkCore
+namespace NCode.QuerySpecifications.EntityFrameworkCore.Specifications
 {
 	public interface IIncludePathQuerySpecification<TEntity> : IQuerySpecification<TEntity>
 		where TEntity : class

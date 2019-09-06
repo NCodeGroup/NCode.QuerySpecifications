@@ -3,17 +3,12 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using NCode.QuerySpecifications.Configuration;
 using NCode.QuerySpecifications.Configurators;
+using NCode.QuerySpecifications.EntityFrameworkCore.Specifications;
 using NCode.QuerySpecifications.Specifications;
 
-namespace NCode.QuerySpecifications.EntityFrameworkCore
+namespace NCode.QuerySpecifications.EntityFrameworkCore.Configurators
 {
-    public interface IIncludePropertyQueryConfigurator<TEntity, TProperty> : IQueryConfigurator<TEntity>
-        where TEntity : class
-    {
-        // nothing
-    }
-
-    public class IncludePropertyQueryConfigurator<TEntity, TInputProperty, TOutputProperty> :
+	public class IncludePropertyQueryConfigurator<TEntity, TInputProperty, TOutputProperty> :
         IIncludePropertyQueryConfigurator<TEntity, TOutputProperty>,
         IIncludePropertyQuerySpecification<TEntity, TInputProperty, TOutputProperty>
         where TEntity : class

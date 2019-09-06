@@ -50,10 +50,7 @@ namespace NCode.QuerySpecifications.Provider
                     throw new InvalidOperationException("TODO");
                 }
 
-                if (specification is IQueryConfiguration<TEntity> children)
-                {
-                    BuildPipe(chain, children.OutputSpecifications);
-                }
+                BuildPipe(chain, specification.OutputSpecifications);
             }
         }
 

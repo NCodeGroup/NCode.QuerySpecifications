@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using NCode.QuerySpecifications.Specifications;
 
-namespace NCode.QuerySpecifications.EntityFrameworkCore
+namespace NCode.QuerySpecifications.EntityFrameworkCore.Specifications
 {
     public interface IIncludePropertyQuerySpecification<TEntity> : IQuerySpecification<TEntity>
         where TEntity : class

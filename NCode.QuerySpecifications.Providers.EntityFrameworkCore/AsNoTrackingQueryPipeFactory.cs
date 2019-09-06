@@ -1,4 +1,5 @@
 ﻿using NCode.QuerySpecifications.EntityFrameworkCore;
+using NCode.QuerySpecifications.EntityFrameworkCore.Specifications;
 using NCode.QuerySpecifications.Provider.Factories;
 using NCode.QuerySpecifications.Provider.Pipes;
 using NCode.QuerySpecifications.Specifications;
