@@ -4,7 +4,7 @@ using NCode.QuerySpecifications.Specifications;
 
 namespace NCode.QuerySpecifications.EntityFrameworkCore
 {
-    public interface IIncludeQuerySpecification<TEntity> : IQuerySpecification<TEntity>
+    public interface IIncludePropertyQuerySpecification<TEntity> : IQuerySpecification<TEntity>
         where TEntity : class
     {
         bool IsRoot { get; }
@@ -16,7 +16,7 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore
         Type OutputPropertyType { get; }
     }
 
-    public interface IIncludeQuerySpecification<TEntity, TInputProperty, TOutputProperty> : IIncludeQuerySpecification<TEntity>
+    public interface IIncludePropertyQuerySpecification<TEntity, TInputProperty, TOutputProperty> : IIncludePropertyQuerySpecification<TEntity>
         where TEntity : class
     {
         Expression<Func<TInputProperty, TOutputProperty>> NavigationPropertyPath { get; }

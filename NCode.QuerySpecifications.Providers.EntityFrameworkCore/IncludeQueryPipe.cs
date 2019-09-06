@@ -8,31 +8,47 @@ using NCode.QuerySpecifications.Provider.Pipes;
 
 namespace NCode.QuerySpecifications.Providers.EntityFrameworkCore
 {
-    public class IncludeQueryPipe<TEntity, TProperty> : IQueryPipe<TEntity>
+	public class IncludePathQueryPipe<TEntity> : IQueryPipe<TEntity>
+		where TEntity : class
+	{
+		private readonly string _navigationPropertyPath;
+
+		public IncludePathQueryPipe(string navigationPropertyPath)
+		{
+			_navigationPropertyPath = navigationPropertyPath ?? throw new ArgumentNullException(nameof(navigationPropertyPath));
+		}
+
+		public virtual IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
+		{
+			return queryRoot.Include(_navigationPropertyPath);
+		}
+	}
+
+	public class IncludePropertyQueryPipe<TEntity, TProperty> : IQueryPipe<TEntity>
         where TEntity : class
     {
-        private readonly Expression<Func<TEntity, TProperty>> _expression;
+        private readonly Expression<Func<TEntity, TProperty>> _navigationPropertyPath;
 
-        public IncludeQueryPipe(Expression<Func<TEntity, TProperty>> expression)
+        public IncludePropertyQueryPipe(Expression<Func<TEntity, TProperty>> navigationPropertyPath)
         {
-            _expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            _navigationPropertyPath = navigationPropertyPath ?? throw new ArgumentNullException(nameof(navigationPropertyPath));
         }
 
         public virtual IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
         {
-            return queryRoot.Include(_expression);
+            return queryRoot.Include(_navigationPropertyPath);
         }
     }
 
-    public class ThenIncludeQueryPipe<TEntity, TInputProperty, TOutputProperty> : IQueryPipe<TEntity>
+    public class IncludePropertyThenQueryPipe<TEntity, TInputProperty, TOutputProperty> : IQueryPipe<TEntity>
         where TEntity : class
     {
-        private readonly Expression<Func<TInputProperty, TOutputProperty>> _expression;
+        private readonly Expression<Func<TInputProperty, TOutputProperty>> _navigationPropertyPath;
         private readonly bool _isEnumerable;
 
-        public ThenIncludeQueryPipe(Expression<Func<TInputProperty, TOutputProperty>> expression, bool isEnumerable)
+        public IncludePropertyThenQueryPipe(Expression<Func<TInputProperty, TOutputProperty>> navigationPropertyPath, bool isEnumerable)
         {
-            _expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            _navigationPropertyPath = navigationPropertyPath ?? throw new ArgumentNullException(nameof(navigationPropertyPath));
             _isEnumerable = isEnumerable;
         }
 
@@ -43,12 +59,12 @@ namespace NCode.QuerySpecifications.Providers.EntityFrameworkCore
             if (_isEnumerable)
             {
                 var query = (IIncludableQueryable<TEntity, IEnumerable<TInputProperty>>)queryRoot;
-                output = query.ThenInclude(_expression);
+                output = query.ThenInclude(_navigationPropertyPath);
             }
             else
             {
                 var query = (IIncludableQueryable<TEntity, TInputProperty>)queryRoot;
-                output = query.ThenInclude(_expression);
+                output = query.ThenInclude(_navigationPropertyPath);
             }
 
             return output;

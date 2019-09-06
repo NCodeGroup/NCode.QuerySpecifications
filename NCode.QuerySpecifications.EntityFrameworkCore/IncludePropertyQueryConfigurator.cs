@@ -7,20 +7,20 @@ using NCode.QuerySpecifications.Specifications;
 
 namespace NCode.QuerySpecifications.EntityFrameworkCore
 {
-    public interface IIncludeQueryConfigurator<TEntity, TProperty> : IQueryConfigurator<TEntity>
+    public interface IIncludePropertyQueryConfigurator<TEntity, TProperty> : IQueryConfigurator<TEntity>
         where TEntity : class
     {
         // nothing
     }
 
-    public class IncludeQueryConfigurator<TEntity, TInputProperty, TOutputProperty> :
-        IIncludeQueryConfigurator<TEntity, TOutputProperty>,
-        IIncludeQuerySpecification<TEntity, TInputProperty, TOutputProperty>
+    public class IncludePropertyQueryConfigurator<TEntity, TInputProperty, TOutputProperty> :
+        IIncludePropertyQueryConfigurator<TEntity, TOutputProperty>,
+        IIncludePropertyQuerySpecification<TEntity, TInputProperty, TOutputProperty>
         where TEntity : class
     {
         private readonly List<IQuerySpecification<TEntity>> _specifications = new List<IQuerySpecification<TEntity>>();
 
-        public IncludeQueryConfigurator(IQueryConfiguration<TEntity> outputConfiguration, Expression<Func<TInputProperty, TOutputProperty>> navigationPropertyPath, bool isRoot, bool isEnumerable)
+        public IncludePropertyQueryConfigurator(IQueryConfiguration<TEntity> outputConfiguration, Expression<Func<TInputProperty, TOutputProperty>> navigationPropertyPath, bool isRoot, bool isEnumerable)
         {
             OutputConfiguration = outputConfiguration ?? throw new ArgumentNullException(nameof(outputConfiguration));
             NavigationPropertyPath = navigationPropertyPath ?? throw new ArgumentNullException(nameof(navigationPropertyPath));

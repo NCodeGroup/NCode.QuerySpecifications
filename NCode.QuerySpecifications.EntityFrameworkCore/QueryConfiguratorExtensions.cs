@@ -31,7 +31,21 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore
             return configurator;
         }
 
-        public static IIncludeQueryConfigurator<TEntity, TProperty> Include<TEntity, TProperty>(this IQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> navigationPropertyPath)
+        public static IQueryConfigurator<TEntity> Include<TEntity>(this IQueryConfigurator<TEntity> configurator, string navigationPropertyPath)
+	        where TEntity : class
+        {
+	        if (configurator == null)
+		        throw new ArgumentNullException(nameof(configurator));
+	        if (navigationPropertyPath == null)
+		        throw new ArgumentNullException(nameof(navigationPropertyPath));
+
+			var specification = new IncludePathQuerySpecification<TEntity>(navigationPropertyPath);
+	        configurator.AddSpecification(specification);
+
+	        return configurator;
+        }
+
+		public static IIncludePropertyQueryConfigurator<TEntity, TProperty> Include<TEntity, TProperty>(this IQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> navigationPropertyPath)
             where TEntity : class
         {
             if (configurator == null)
@@ -39,13 +53,13 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore
             if (navigationPropertyPath == null)
                 throw new ArgumentNullException(nameof(navigationPropertyPath));
 
-            var nextConfigurator = new IncludeQueryConfigurator<TEntity, TEntity, TProperty>(configurator.OutputConfiguration, navigationPropertyPath, true, false);
+            var nextConfigurator = new IncludePropertyQueryConfigurator<TEntity, TEntity, TProperty>(configurator.OutputConfiguration, navigationPropertyPath, true, false);
             configurator.AddSpecification(nextConfigurator);
 
             return nextConfigurator;
         }
 
-        public static IIncludeQueryConfigurator<TEntity, TProperty> ThenInclude<TEntity, TPreviousProperty, TProperty>(this IIncludeQueryConfigurator<TEntity, TPreviousProperty> configurator, Expression<Func<TPreviousProperty, TProperty>> navigationPropertyPath)
+        public static IIncludePropertyQueryConfigurator<TEntity, TProperty> ThenInclude<TEntity, TPreviousProperty, TProperty>(this IIncludePropertyQueryConfigurator<TEntity, TPreviousProperty> configurator, Expression<Func<TPreviousProperty, TProperty>> navigationPropertyPath)
             where TEntity : class
             where TPreviousProperty : class
         {
@@ -54,13 +68,13 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore
             if (navigationPropertyPath == null)
                 throw new ArgumentNullException(nameof(navigationPropertyPath));
 
-            var nextConfigurator = new IncludeQueryConfigurator<TEntity, TPreviousProperty, TProperty>(configurator.OutputConfiguration, navigationPropertyPath, false, false);
+            var nextConfigurator = new IncludePropertyQueryConfigurator<TEntity, TPreviousProperty, TProperty>(configurator.OutputConfiguration, navigationPropertyPath, false, false);
             configurator.AddSpecification(nextConfigurator);
 
             return nextConfigurator;
         }
 
-        public static IIncludeQueryConfigurator<TEntity, TProperty> ThenInclude<TEntity, TPreviousProperty, TProperty>(this IIncludeQueryConfigurator<TEntity, IEnumerable<TPreviousProperty>> configurator, Expression<Func<TPreviousProperty, TProperty>> navigationPropertyPath)
+        public static IIncludePropertyQueryConfigurator<TEntity, TProperty> ThenInclude<TEntity, TPreviousProperty, TProperty>(this IIncludePropertyQueryConfigurator<TEntity, IEnumerable<TPreviousProperty>> configurator, Expression<Func<TPreviousProperty, TProperty>> navigationPropertyPath)
             where TEntity : class
         {
             if (configurator == null)
@@ -68,7 +82,7 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore
             if (navigationPropertyPath == null)
                 throw new ArgumentNullException(nameof(navigationPropertyPath));
 
-            var nextConfigurator = new IncludeQueryConfigurator<TEntity, TPreviousProperty, TProperty>(configurator.OutputConfiguration, navigationPropertyPath, false, true);
+            var nextConfigurator = new IncludePropertyQueryConfigurator<TEntity, TPreviousProperty, TProperty>(configurator.OutputConfiguration, navigationPropertyPath, false, true);
             configurator.AddSpecification(nextConfigurator);
 
             return nextConfigurator;
