@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using NCode.QuerySpecifications.Builder.Pipes;
 
-namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder
+namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Pipes
 {
 	public class IncludePathQueryPipe<TEntity> : IQueryPipe<TEntity>
 		where TEntity : class

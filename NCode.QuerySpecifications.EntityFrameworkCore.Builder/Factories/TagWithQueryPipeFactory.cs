@@ -1,20 +1,21 @@
 ﻿using NCode.QuerySpecifications.Builder.Factories;
 using NCode.QuerySpecifications.Builder.Pipes;
+using NCode.QuerySpecifications.EntityFrameworkCore.Builder.Pipes;
 using NCode.QuerySpecifications.EntityFrameworkCore.Specifications;
 using NCode.QuerySpecifications.Specifications;
 
-namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder
+namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Factories
 {
-	public class AsTrackingQueryPipeFactory : IQueryPipeFactory
+	public class TagWithQueryPipeFactory : IQueryPipeFactory
 	{
-		public string Name => EntityFrameworkCoreQueryNames.AsTracking;
+		public string Name => EntityFrameworkCoreQueryNames.TagWith;
 
 		public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
 			where TEntity : class
 		{
-			if (specification is AsTrackingQuerySpecification<TEntity>)
+			if (specification is ITagWithQuerySpecification<TEntity> tagWithSpec)
 			{
-				queryPipe = new AsTrackingQueryPipe<TEntity>();
+				queryPipe = new TagWithQueryPipe<TEntity>(tagWithSpec.Tag);
 				return true;
 			}
 

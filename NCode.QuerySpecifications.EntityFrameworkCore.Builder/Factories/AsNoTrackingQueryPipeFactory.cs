@@ -1,9 +1,10 @@
 ﻿using NCode.QuerySpecifications.Builder.Factories;
 using NCode.QuerySpecifications.Builder.Pipes;
+using NCode.QuerySpecifications.EntityFrameworkCore.Builder.Pipes;
 using NCode.QuerySpecifications.EntityFrameworkCore.Specifications;
 using NCode.QuerySpecifications.Specifications;
 
-namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder
+namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Factories
 {
 	public class AsNoTrackingQueryPipeFactory : IQueryPipeFactory
 	{
