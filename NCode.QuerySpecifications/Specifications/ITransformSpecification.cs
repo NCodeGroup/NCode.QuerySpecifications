@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using NCode.QuerySpecifications.Configuration;
+﻿using NCode.QuerySpecifications.Configuration;
 
 namespace NCode.QuerySpecifications.Specifications
 {
@@ -8,6 +6,6 @@ namespace NCode.QuerySpecifications.Specifications
         where TIn : class
         where TOut : class
     {
-        Expression<Func<TIn, TOut>> Selector { get; }
+        // nothing
     }
 }

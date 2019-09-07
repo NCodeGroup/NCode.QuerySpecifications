@@ -13,7 +13,7 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Factories
         public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
             where TEntity : class
         {
-            if (specification is IgnoreQueryFiltersQuerySpecification<TEntity>)
+            if (specification is IIgnoreQueryFiltersQuerySpecification<TEntity>)
             {
                 queryPipe = new IgnoreQueryFiltersQueryPipe<TEntity>();
                 return true;

@@ -11,7 +11,7 @@ namespace NCode.QuerySpecifications.Builder.Factories
             where TIn : class
             where TOut : class
         {
-            if (specification is ITransformSpecification<TIn, TOut> transformSpec)
+            if (specification is ISelectTransformSpecification<TIn, TOut> transformSpec)
             {
                 transform = new SelectQueryTransform<TIn, TOut>(transformSpec.Selector);
                 return true;
