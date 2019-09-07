@@ -6,22 +6,22 @@ using NCode.QuerySpecifications.Specifications;
 
 namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Factories
 {
-	public class TagWithQueryPipeFactory : IQueryPipeFactory
-	{
-		public string Name => EntityFrameworkCoreQueryNames.TagWith;
+    public class TagWithQueryPipeFactory : IQueryPipeFactory
+    {
+        public string Name => EntityFrameworkCoreQueryNames.TagWith;
 
-		public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
-			where TEntity : class
-		{
-			if (specification is ITagWithQuerySpecification<TEntity> tagWithSpec)
-			{
-				queryPipe = new TagWithQueryPipe<TEntity>(tagWithSpec.Tag);
-				return true;
-			}
+        public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
+            where TEntity : class
+        {
+            if (specification is ITagWithQuerySpecification<TEntity> tagWithSpec)
+            {
+                queryPipe = new TagWithQueryPipe<TEntity>(tagWithSpec.Tag);
+                return true;
+            }
 
-			queryPipe = null;
-			return false;
-		}
+            queryPipe = null;
+            return false;
+        }
 
-	}
+    }
 }

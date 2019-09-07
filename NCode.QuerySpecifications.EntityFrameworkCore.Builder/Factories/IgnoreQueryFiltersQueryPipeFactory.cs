@@ -6,16 +6,16 @@ using NCode.QuerySpecifications.Specifications;
 
 namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Factories
 {
-    public class AsTrackingQueryPipeFactory : IQueryPipeFactory
+    public class IgnoreQueryFiltersQueryPipeFactory : IQueryPipeFactory
     {
-        public string Name => EntityFrameworkCoreQueryNames.AsTracking;
+        public string Name => EntityFrameworkCoreQueryNames.IgnoreQueryFilters;
 
         public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
             where TEntity : class
         {
-            if (specification is AsTrackingQuerySpecification<TEntity>)
+            if (specification is IgnoreQueryFiltersQuerySpecification<TEntity>)
             {
-                queryPipe = new AsTrackingQueryPipe<TEntity>();
+                queryPipe = new IgnoreQueryFiltersQueryPipe<TEntity>();
                 return true;
             }
 

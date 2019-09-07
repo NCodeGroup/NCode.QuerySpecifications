@@ -8,23 +8,23 @@ using NCode.QuerySpecifications.Builder.Pipes;
 
 namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Pipes
 {
-	public class IncludePathQueryPipe<TEntity> : IQueryPipe<TEntity>
-		where TEntity : class
-	{
-		private readonly string _navigationPropertyPath;
+    public class IncludePathQueryPipe<TEntity> : IQueryPipe<TEntity>
+        where TEntity : class
+    {
+        private readonly string _navigationPropertyPath;
 
-		public IncludePathQueryPipe(string navigationPropertyPath)
-		{
-			_navigationPropertyPath = navigationPropertyPath ?? throw new ArgumentNullException(nameof(navigationPropertyPath));
-		}
+        public IncludePathQueryPipe(string navigationPropertyPath)
+        {
+            _navigationPropertyPath = navigationPropertyPath ?? throw new ArgumentNullException(nameof(navigationPropertyPath));
+        }
 
-		public virtual IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
-		{
-			return queryRoot.Include(_navigationPropertyPath);
-		}
-	}
+        public virtual IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
+        {
+            return queryRoot.Include(_navigationPropertyPath);
+        }
+    }
 
-	public class IncludePropertyQueryPipe<TEntity, TProperty> : IQueryPipe<TEntity>
+    public class IncludePropertyQueryPipe<TEntity, TProperty> : IQueryPipe<TEntity>
         where TEntity : class
     {
         private readonly Expression<Func<TEntity, TProperty>> _navigationPropertyPath;
