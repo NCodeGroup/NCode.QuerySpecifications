@@ -17,15 +17,6 @@ namespace NCode.QuerySpecifications.Builder
             _compositeQueryFactory = compositeQueryFactory ?? throw new ArgumentNullException(nameof(compositeQueryFactory));
         }
 
-        public virtual IQueryPipe<TEntity> Build<TEntity>(IQueryConfiguration<TEntity> configuration)
-            where TEntity : class
-        {
-            if (configuration == null)
-                throw new ArgumentNullException(nameof(configuration));
-
-            return BuildPipe(configuration.OutputSpecifications);
-        }
-
         private IQueryPipe<TEntity> BuildPipe<TEntity>(IEnumerable<IQuerySpecification<TEntity>> specifications)
             where TEntity : class
         {
@@ -52,6 +43,15 @@ namespace NCode.QuerySpecifications.Builder
 
                 BuildPipe(chain, specification.OutputSpecifications);
             }
+        }
+
+        public virtual IQueryPipe<TEntity> Build<TEntity>(IQueryConfiguration<TEntity> configuration)
+            where TEntity : class
+        {
+            if (configuration == null)
+                throw new ArgumentNullException(nameof(configuration));
+
+            return BuildPipe(configuration.OutputSpecifications);
         }
 
         public virtual IQueryTransform<TIn, TOut> Build<TIn, TOut>(ITransformConfiguration<TIn, TOut> configuration)
