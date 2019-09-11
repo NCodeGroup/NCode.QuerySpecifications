@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NCode.QuerySpecifications.Builder\NCode.QuerySpecifications.Builder.csproj" />
     <ProjectReference Include="..\NCode.QuerySpecifications.EntityFrameworkCore.Builder\NCode.QuerySpecifications.EntityFrameworkCore.Builder.csproj" />
+    <ProjectReference Include="..\NCode.QuerySpecifications.TestModels\NCode.QuerySpecifications.TestModels.csproj" />
   </ItemGroup>
 
   <ItemGroup>

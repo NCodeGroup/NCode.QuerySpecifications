@@ -7,27 +7,29 @@ namespace NCode.QuerySpecifications.Builder
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollectionQueryBuilder AddQueryBuilder(this IServiceCollection services)
+        public static IServiceCollection AddQueryBuilder(this IServiceCollection services, Action<IServiceCollectionQueryBuilder> callback)
         {
-            if (services == null)
-                throw new ArgumentNullException(nameof(services));
+	        if (services == null)
+		        throw new ArgumentNullException(nameof(services));
 
-            services.TryAddTransient<IQueryBuilder, QueryBuilder>();
-            services.TryAddTransient<ICompositeQueryFactory, CompositeQueryFactory>();
+	        services.TryAddTransient<IQueryBuilder, QueryBuilder>();
+	        services.TryAddTransient<ICompositeQueryFactory, CompositeQueryFactory>();
 
-            var builder = new ServiceCollectionQueryBuilder(services);
+	        IServiceCollectionQueryBuilder builder = new ServiceCollectionQueryBuilder(services);
 
-            // IQueryPipeFactory
-            builder.AddPipeFactory<WhereQueryPipeFactory>();
-            builder.AddPipeFactory<PageQueryPipeFactory>();
-            builder.AddPipeFactory<OrderByQueryPipeFactory>();
-            builder.AddPipeFactory<DistinctQueryPipeFactory>();
+	        callback(builder);
 
-            // IQueryTransformFactory
-            builder.AddTransformFactory<SelectQueryTransformFactory>();
+	        // IQueryPipeFactory
+	        builder.AddPipeFactory<WhereQueryPipeFactory>();
+	        builder.AddPipeFactory<PageQueryPipeFactory>();
+	        builder.AddPipeFactory<OrderByQueryPipeFactory>();
+	        builder.AddPipeFactory<DistinctQueryPipeFactory>();
 
-            return builder;
+	        // IQueryTransformFactory
+	        builder.AddTransformFactory<SelectQueryTransformFactory>();
+
+	        return services;
         }
 
-    }
+	}
 }
