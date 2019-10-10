@@ -13,9 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCode.QuerySpecifications.E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCode.QuerySpecifications.EntityFrameworkCore.Builder.Tests", "NCode.QuerySpecifications.EntityFrameworkCore.Builder.Tests\NCode.QuerySpecifications.EntityFrameworkCore.Builder.Tests.csproj", "{9F0E274B-4208-409F-90AB-BC401E924584}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCode.QuerySpecifications.Tests", "NCode.QuerySpecifications.Tests\NCode.QuerySpecifications.Tests.csproj", "{E89EF22C-8BDB-431D-98FD-C62FAED68D55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCode.QuerySpecifications.Tests", "NCode.QuerySpecifications.Tests\NCode.QuerySpecifications.Tests.csproj", "{E89EF22C-8BDB-431D-98FD-C62FAED68D55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCode.QuerySpecifications.TestModels", "NCode.QuerySpecifications.TestModels\NCode.QuerySpecifications.TestModels.csproj", "{11B99C7B-B20B-4311-888E-18920BBC4609}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCode.QuerySpecifications.TestUtilities", "NCode.QuerySpecifications.TestUtilities\NCode.QuerySpecifications.TestUtilities.csproj", "{E7C08106-941F-4F21-A0DE-39AC05ACB432}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,10 @@ Global
 		{E89EF22C-8BDB-431D-98FD-C62FAED68D55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E89EF22C-8BDB-431D-98FD-C62FAED68D55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E89EF22C-8BDB-431D-98FD-C62FAED68D55}.Release|Any CPU.Build.0 = Release|Any CPU
-		{11B99C7B-B20B-4311-888E-18920BBC4609}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11B99C7B-B20B-4311-888E-18920BBC4609}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{11B99C7B-B20B-4311-888E-18920BBC4609}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{11B99C7B-B20B-4311-888E-18920BBC4609}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7C08106-941F-4F21-A0DE-39AC05ACB432}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7C08106-941F-4F21-A0DE-39AC05ACB432}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7C08106-941F-4F21-A0DE-39AC05ACB432}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7C08106-941F-4F21-A0DE-39AC05ACB432}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
