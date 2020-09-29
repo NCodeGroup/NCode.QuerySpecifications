@@ -1,4 +1,21 @@
-﻿using System;
+﻿#region Copyright Preamble
+// 
+//    Copyright @ 2020 NCode Group
+// 
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+// 
+//        http://www.apache.org/licenses/LICENSE-2.0
+// 
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NCode.QuerySpecifications.Builder.Factories;
@@ -27,25 +44,6 @@ namespace NCode.QuerySpecifications.Builder
             _compositeQueryPipeFactory = compositeQueryPipeFactory ?? throw new ArgumentNullException(nameof(compositeQueryPipeFactory));
         }
 
-        private IQueryPipe<TEntity> CreatePipe<TEntity>(IQuerySpecification<TEntity> specification)
-            where TEntity : class
-        {
-            if (_compositeQueryPipeFactory.TryCreate(specification, out var pipe))
-            {
-                return pipe;
-            }
-
-            throw new InvalidOperationException("TODO");
-        }
-
-        private IQueryPipe<TEntity> CreateCompositePipe<TEntity>(IEnumerable<IQuerySpecification<TEntity>> specifications)
-            where TEntity : class
-        {
-            var pipes = specifications.Select(CreatePipe);
-
-            return new CompositeQueryPipe<TEntity>(pipes);
-        }
-
         public IQueryPipe<TEntity> Build<TEntity>(IQueryConfiguration<TEntity> queryConfiguration)
             where TEntity : class
         {
@@ -72,5 +70,23 @@ namespace NCode.QuerySpecifications.Builder
             return new CompositeQueryPipeTransform<TIn, TOut>(inputPipe, outputPipe, transformPipe);
         }
 
+        private IQueryPipe<TEntity> CreatePipe<TEntity>(IQuerySpecification<TEntity> specification)
+            where TEntity : class
+        {
+            if (_compositeQueryPipeFactory.TryCreate(specification, out var pipe))
+            {
+                return pipe;
+            }
+
+            throw new InvalidOperationException("TODO");
+        }
+
+        private IQueryPipe<TEntity> CreateCompositePipe<TEntity>(IEnumerable<IQuerySpecification<TEntity>> specifications)
+            where TEntity : class
+        {
+            var pipes = specifications.Select(CreatePipe);
+
+            return new CompositeQueryPipe<TEntity>(pipes);
+        }
     }
 }
