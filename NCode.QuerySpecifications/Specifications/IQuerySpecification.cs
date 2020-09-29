@@ -5,4 +5,11 @@
     {
         // nothing
     }
+
+    public interface IQuerySpecification<TIn, TOut> : IQueryName
+        where TIn : class
+        where TOut : class
+    {
+        // nothing
+    }
 }

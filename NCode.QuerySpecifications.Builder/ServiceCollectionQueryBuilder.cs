@@ -10,8 +10,8 @@ namespace NCode.QuerySpecifications.Builder
         IServiceCollectionQueryBuilder AddPipeFactory<TFactory>()
             where TFactory : class, IQueryPipeFactory;
 
-        IServiceCollectionQueryBuilder AddTransformFactory<TFactory>()
-            where TFactory : class, IQueryTransformFactory;
+        IServiceCollectionQueryBuilder AddPipeTransformFactory<TFactory>()
+            where TFactory : class, IQueryPipeTransformFactory;
     }
 
     public class ServiceCollectionQueryBuilder : IServiceCollectionQueryBuilder
@@ -30,10 +30,10 @@ namespace NCode.QuerySpecifications.Builder
             return this;
         }
 
-        public IServiceCollectionQueryBuilder AddTransformFactory<TFactory>()
-            where TFactory : class, IQueryTransformFactory
+        public IServiceCollectionQueryBuilder AddPipeTransformFactory<TFactory>()
+            where TFactory : class, IQueryPipeTransformFactory
         {
-            ServiceCollection.TryAddEnumerable(ServiceDescriptor.Transient<IQueryTransformFactory, TFactory>());
+            ServiceCollection.TryAddEnumerable(ServiceDescriptor.Transient<IQueryPipeTransformFactory, TFactory>());
             return this;
         }
 

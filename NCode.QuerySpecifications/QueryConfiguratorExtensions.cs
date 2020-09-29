@@ -133,7 +133,7 @@ namespace NCode.QuerySpecifications
             return configurator;
         }
 
-        public static ITransformConfigurator<TIn, TOut> Select<TIn, TOut>(this IQueryConfigurator<TIn> configurator, Expression<Func<TIn, TOut>> selector)
+        public static IQueryConfigurator<TIn, TOut> Select<TIn, TOut>(this IQueryConfigurator<TIn> configurator, Expression<Func<TIn, TOut>> selector)
             where TIn : class
             where TOut : class
         {
@@ -142,13 +142,13 @@ namespace NCode.QuerySpecifications
             if (selector == null)
                 throw new ArgumentNullException(nameof(selector));
 
-            var transformSpecification = new SelectTransformSpecification<TIn, TOut>(selector);
-            var nextConfigurator = new TransformConfigurator<TIn, TOut>(configurator, transformSpecification);
+            var transformSpecification = new SelectQuerySpecification<TIn, TOut>(selector);
+            var nextConfigurator = new QueryConfigurator<TIn, TOut>(configurator, transformSpecification);
 
             return nextConfigurator;
         }
 
-        public static ITransformConfigurator<TIn, TOut> Output<TIn, TOut>(this ITransformConfigurator<TIn, TOut> configurator, Action<IQueryConfigurator<TOut>> configureCallback)
+        public static IQueryConfigurator<TIn, TOut> Output<TIn, TOut>(this IQueryConfigurator<TIn, TOut> configurator, Action<IQueryConfigurator<TOut>> configureCallback)
             where TIn : class
             where TOut : class
         {

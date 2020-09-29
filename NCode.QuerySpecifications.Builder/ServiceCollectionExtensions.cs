@@ -7,29 +7,29 @@ namespace NCode.QuerySpecifications.Builder
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddQueryBuilder(this IServiceCollection services, Action<IServiceCollectionQueryBuilder> callback)
+        public static IServiceCollection AddQueryBuilder(this IServiceCollection services, Action<IServiceCollectionQueryBuilder> configureCallback)
         {
-	        if (services == null)
-		        throw new ArgumentNullException(nameof(services));
+            if (services == null)
+                throw new ArgumentNullException(nameof(services));
 
-	        services.TryAddTransient<IQueryBuilder, QueryBuilder>();
-	        services.TryAddTransient<ICompositeQueryFactory, CompositeQueryFactory>();
+            services.TryAddTransient<IQueryBuilder, QueryBuilder>();
+            services.TryAddTransient<ICompositeQueryPipeFactory, CompositeQueryPipeFactory>();
 
-	        IServiceCollectionQueryBuilder builder = new ServiceCollectionQueryBuilder(services);
+            var builder = new ServiceCollectionQueryBuilder(services);
 
-	        callback(builder);
+            configureCallback(builder);
 
-	        // IQueryPipeFactory
-	        builder.AddPipeFactory<WhereQueryPipeFactory>();
-	        builder.AddPipeFactory<PageQueryPipeFactory>();
-	        builder.AddPipeFactory<OrderByQueryPipeFactory>();
-	        builder.AddPipeFactory<DistinctQueryPipeFactory>();
+            // IQueryPipeFactory
+            builder.AddPipeFactory<WhereQueryPipeFactory>();
+            builder.AddPipeFactory<PageQueryPipeFactory>();
+            builder.AddPipeFactory<OrderByQueryPipeFactory>();
+            builder.AddPipeFactory<DistinctQueryPipeFactory>();
 
-	        // IQueryTransformFactory
-	        builder.AddTransformFactory<SelectQueryTransformFactory>();
+            // IQueryPipeTransformFactory
+            builder.AddPipeTransformFactory<SelectQueryPipeFactory>();
 
-	        return services;
+            return services;
         }
 
-	}
+    }
 }

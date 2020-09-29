@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using NCode.QuerySpecifications.Builder.Factories;
 using NCode.QuerySpecifications.Builder.Pipes;
-using NCode.QuerySpecifications.Builder.Transforms;
 using NCode.QuerySpecifications.Configuration;
 using NCode.QuerySpecifications.Specifications;
 
@@ -11,27 +10,27 @@ namespace NCode.QuerySpecifications.Builder
 {
     public interface IQueryBuilder
     {
-        IQueryPipe<TEntity> Build<TEntity>(IQueryConfiguration<TEntity> configuration)
+        IQueryPipe<TEntity> Build<TEntity>(IQueryConfiguration<TEntity> queryConfiguration)
             where TEntity : class;
 
-        IQueryTransform<TIn, TOut> Build<TIn, TOut>(ITransformConfiguration<TIn, TOut> configuration)
+        IQueryPipe<TIn, TOut> Build<TIn, TOut>(IQueryConfiguration<TIn, TOut> queryConfiguration)
             where TIn : class
             where TOut : class;
     }
 
     public class QueryBuilder : IQueryBuilder
     {
-        private readonly ICompositeQueryFactory _compositeQueryFactory;
+        private readonly ICompositeQueryPipeFactory _compositeQueryPipeFactory;
 
-        public QueryBuilder(ICompositeQueryFactory compositeQueryFactory)
+        public QueryBuilder(ICompositeQueryPipeFactory compositeQueryPipeFactory)
         {
-            _compositeQueryFactory = compositeQueryFactory ?? throw new ArgumentNullException(nameof(compositeQueryFactory));
+            _compositeQueryPipeFactory = compositeQueryPipeFactory ?? throw new ArgumentNullException(nameof(compositeQueryPipeFactory));
         }
 
         private IQueryPipe<TEntity> CreatePipe<TEntity>(IQuerySpecification<TEntity> specification)
             where TEntity : class
         {
-            if (_compositeQueryFactory.TryCreate(specification, out var pipe))
+            if (_compositeQueryPipeFactory.TryCreate(specification, out var pipe))
             {
                 return pipe;
             }
@@ -39,7 +38,7 @@ namespace NCode.QuerySpecifications.Builder
             throw new InvalidOperationException("TODO");
         }
 
-        private IQueryPipe<TEntity> CreateChain<TEntity>(IEnumerable<IQuerySpecification<TEntity>> specifications)
+        private IQueryPipe<TEntity> CreateCompositePipe<TEntity>(IEnumerable<IQuerySpecification<TEntity>> specifications)
             where TEntity : class
         {
             var pipes = specifications.Select(CreatePipe);
@@ -47,32 +46,30 @@ namespace NCode.QuerySpecifications.Builder
             return new CompositeQueryPipe<TEntity>(pipes);
         }
 
-        public IQueryPipe<TEntity> Build<TEntity>(IQueryConfiguration<TEntity> configuration)
+        public IQueryPipe<TEntity> Build<TEntity>(IQueryConfiguration<TEntity> queryConfiguration)
             where TEntity : class
         {
-            if (configuration == null)
-                throw new ArgumentNullException(nameof(configuration));
+            if (queryConfiguration == null)
+                throw new ArgumentNullException(nameof(queryConfiguration));
 
-            return CreateChain(configuration.OutputSpecifications);
+            return CreateCompositePipe(queryConfiguration.OutputSpecifications);
         }
 
-        public IQueryTransform<TIn, TOut> Build<TIn, TOut>(ITransformConfiguration<TIn, TOut> configuration)
+        public IQueryPipe<TIn, TOut> Build<TIn, TOut>(IQueryConfiguration<TIn, TOut> queryConfiguration)
             where TIn : class
             where TOut : class
         {
-            if (configuration == null)
-                throw new ArgumentNullException(nameof(configuration));
+            if (queryConfiguration == null)
+                throw new ArgumentNullException(nameof(queryConfiguration));
 
-            if (!_compositeQueryFactory.TryCreate(configuration.TransformSpecification, out var transform))
+            if (!_compositeQueryPipeFactory.TryCreate(queryConfiguration.TransformSpecification, out var transformPipe))
                 throw new InvalidOperationException("TODO");
 
-            var inputPipe = CreateChain(configuration.InputSpecifications);
+            var inputPipe = CreateCompositePipe(queryConfiguration.InputSpecifications);
 
-            var outputPipe = CreateChain(configuration.OutputSpecifications);
+            var outputPipe = CreateCompositePipe(queryConfiguration.OutputSpecifications);
 
-            var chain = new ChainQueryTransform<TIn, TOut>(inputPipe, outputPipe, transform);
-
-            return chain;
+            return new CompositeQueryPipeTransform<TIn, TOut>(inputPipe, outputPipe, transformPipe);
         }
 
     }

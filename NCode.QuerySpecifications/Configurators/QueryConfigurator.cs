@@ -16,6 +16,14 @@ namespace NCode.QuerySpecifications.Configurators
         void AddSpecification(IQuerySpecification<TEntity> specification);
     }
 
+    public interface IQueryConfigurator<TIn, TOut> : IQueryConfigurator<TOut>
+        where TIn : class
+        where TOut : class
+    {
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        IQueryConfiguration<TIn, TOut> TransformConfiguration { get; }
+    }
+
     public class QueryConfigurator<TEntity> : IQueryConfigurator<TEntity>, IQueryConfiguration<TEntity>
         where TEntity : class
     {
@@ -31,6 +39,35 @@ namespace NCode.QuerySpecifications.Configurators
                 throw new ArgumentNullException(nameof(specification));
 
             _specifications.Add(specification);
+        }
+    }
+
+    public class QueryConfigurator<TIn, TOut> : IQueryConfigurator<TIn, TOut>, IQueryConfiguration<TIn, TOut>
+        where TIn : class
+        where TOut : class
+    {
+        private readonly IQueryConfigurator<TIn> _parentConfigurator;
+        private readonly List<IQuerySpecification<TOut>> _outputSpecifications = new List<IQuerySpecification<TOut>>();
+
+        public IQueryConfiguration<TOut> OutputConfiguration => this;
+
+        public IQueryConfiguration<TIn, TOut> TransformConfiguration => this;
+
+        public IQuerySpecification<TIn, TOut> TransformSpecification { get; }
+
+        public IReadOnlyList<IQuerySpecification<TIn>> InputSpecifications => _parentConfigurator.OutputConfiguration.OutputSpecifications;
+
+        public IReadOnlyList<IQuerySpecification<TOut>> OutputSpecifications => _outputSpecifications;
+
+        public QueryConfigurator(IQueryConfigurator<TIn> parentConfigurator, IQuerySpecification<TIn, TOut> transformSpecification)
+        {
+            _parentConfigurator = parentConfigurator ?? throw new ArgumentNullException(nameof(parentConfigurator));
+            TransformSpecification = transformSpecification ?? throw new ArgumentNullException(nameof(transformSpecification));
+        }
+
+        void IQueryConfigurator<TOut>.AddSpecification(IQuerySpecification<TOut> specification)
+        {
+            _outputSpecifications.Add(specification);
         }
 
     }

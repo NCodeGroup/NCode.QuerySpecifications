@@ -19,7 +19,7 @@ namespace NCode.QuerySpecifications
             return outputConfigurator.OutputConfiguration;
         }
 
-        public static ITransformConfiguration<TEntity, TOut> Configure<TOut>(Func<IQueryConfigurator<TEntity>, ITransformConfigurator<TEntity, TOut>> configureCallback)
+        public static IQueryConfiguration<TEntity, TOut> Configure<TOut>(Func<IQueryConfigurator<TEntity>, IQueryConfigurator<TEntity, TOut>> configureCallback)
             where TOut : class
         {
             if (configureCallback == null)

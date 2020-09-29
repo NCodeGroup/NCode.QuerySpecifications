@@ -1,19 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NCode.QuerySpecifications.Builder.Pipes;
-using NCode.QuerySpecifications.Builder.Transforms;
 using NCode.QuerySpecifications.Specifications;
 
 namespace NCode.QuerySpecifications.Builder.Factories
 {
-    public class CompositeQueryFactory : ICompositeQueryFactory
+    public interface ICompositeQueryPipeFactory : IQueryPipeFactory, IQueryPipeTransformFactory
+    {
+        // nothing
+    }
+
+    public class CompositeQueryPipeFactory : ICompositeQueryPipeFactory
     {
         private readonly IReadOnlyDictionary<string, IQueryPipeFactory[]> _pipeFactories;
-        private readonly IReadOnlyDictionary<string, IQueryTransformFactory[]> _transformFactories;
+        private readonly IReadOnlyDictionary<string, IQueryPipeTransformFactory[]> _transformFactories;
 
         public string Name => "Composite";
 
-        public CompositeQueryFactory(IEnumerable<IQueryPipeFactory> pipeFactories, IEnumerable<IQueryTransformFactory> transformFactories)
+        public CompositeQueryPipeFactory(IEnumerable<IQueryPipeFactory> pipeFactories, IEnumerable<IQueryPipeTransformFactory> transformFactories)
         {
             _pipeFactories = pipeFactories
                 .GroupBy(factory => factory.Name)
@@ -42,7 +46,7 @@ namespace NCode.QuerySpecifications.Builder.Factories
             return false;
         }
 
-        public bool TryCreate<TIn, TOut>(ITransformSpecification<TIn, TOut> specification, out IQueryTransform<TIn, TOut> transform)
+        public bool TryCreate<TIn, TOut>(IQuerySpecification<TIn, TOut> specification, out IQueryPipe<TIn, TOut> pipe)
             where TIn : class
             where TOut : class
         {
@@ -50,14 +54,14 @@ namespace NCode.QuerySpecifications.Builder.Factories
             {
                 foreach (var factory in factories)
                 {
-                    if (factory.TryCreate(specification, out transform))
+                    if (factory.TryCreate(specification, out pipe))
                     {
                         return true;
                     }
                 }
             }
 
-            transform = null;
+            pipe = null;
             return false;
         }
 

@@ -10,7 +10,8 @@ namespace NCode.QuerySpecifications.Tests
         [Fact]
         public void Build_Where()
         {
-            var query = Query<Order>.Configure(config => config.Where(_ => _.Freight == 0));
+            var query = Query<Order>.Configure(config => config
+                .Where(order => order.Freight == 0));
 
             var spec = Assert.Single(query.OutputSpecifications);
 
@@ -22,7 +23,8 @@ namespace NCode.QuerySpecifications.Tests
         [Fact]
         public void Build_OrderByAscending_WithoutComparer()
         {
-            var query = Query<Order>.Configure(config => config.OrderBy(_ => _.Freight));
+            var query = Query<Order>.Configure(config => config
+                .OrderBy(order => order.Freight));
 
             var spec = Assert.Single(query.OutputSpecifications);
 
@@ -39,7 +41,8 @@ namespace NCode.QuerySpecifications.Tests
         [Fact]
         public void Build_OrderByAscending_WithComparer()
         {
-            var query = Query<Order>.Configure(config => config.OrderBy(_ => _.Freight, Comparer<decimal?>.Default));
+            var query = Query<Order>.Configure(config => config
+                .OrderBy(order => order.Freight, Comparer<decimal?>.Default));
 
             var spec = Assert.Single(query.OutputSpecifications);
 
@@ -56,7 +59,8 @@ namespace NCode.QuerySpecifications.Tests
         [Fact]
         public void Build_OrderByDescending_WithoutComparer()
         {
-            var query = Query<Order>.Configure(config => config.OrderByDescending(_ => _.Freight));
+            var query = Query<Order>.Configure(config => config
+                .OrderByDescending(order => order.Freight));
 
             var spec = Assert.Single(query.OutputSpecifications);
 
@@ -73,7 +77,8 @@ namespace NCode.QuerySpecifications.Tests
         [Fact]
         public void Build_OrderByDescending_WithComparer()
         {
-            var query = Query<Order>.Configure(config => config.OrderByDescending(_ => _.Freight, Comparer<decimal?>.Default));
+            var query = Query<Order>.Configure(config => config
+                .OrderByDescending(order => order.Freight, Comparer<decimal?>.Default));
 
             var spec = Assert.Single(query.OutputSpecifications);
 
@@ -90,7 +95,9 @@ namespace NCode.QuerySpecifications.Tests
         [Fact]
         public void Build_OrderByAscending_ThenByAscending_WithoutComparer()
         {
-            var query = Query<Order>.Configure(config => config.OrderBy(_ => _.Freight).ThenBy(_ => _.ShipVia));
+            var query = Query<Order>.Configure(config => config
+                .OrderBy(order => order.Freight)
+                .ThenBy(order => order.ShipVia));
 
             Assert.Equal(2, query.OutputSpecifications.Count);
 
@@ -116,7 +123,9 @@ namespace NCode.QuerySpecifications.Tests
         [Fact]
         public void Build_OrderByAscending_ThenByAscending_WithComparer()
         {
-            var query = Query<Order>.Configure(config => config.OrderBy(_ => _.Freight).ThenBy(_ => _.ShipVia, Comparer<int?>.Default));
+            var query = Query<Order>.Configure(config => config
+                .OrderBy(order => order.Freight)
+                .ThenBy(order => order.ShipVia, Comparer<int?>.Default));
 
             Assert.Equal(2, query.OutputSpecifications.Count);
 
@@ -142,7 +151,9 @@ namespace NCode.QuerySpecifications.Tests
         [Fact]
         public void Build_OrderByAscending_ThenByDescending_WithoutComparer()
         {
-            var query = Query<Order>.Configure(config => config.OrderBy(_ => _.Freight).ThenByDescending(_ => _.ShipVia));
+            var query = Query<Order>.Configure(config => config
+                .OrderBy(order => order.Freight)
+                .ThenByDescending(order => order.ShipVia));
 
             Assert.Equal(2, query.OutputSpecifications.Count);
 
@@ -168,7 +179,9 @@ namespace NCode.QuerySpecifications.Tests
         [Fact]
         public void Build_OrderByAscending_ThenByDescending_WithComparer()
         {
-            var query = Query<Order>.Configure(config => config.OrderBy(_ => _.Freight).ThenByDescending(_ => _.ShipVia, Comparer<int?>.Default));
+            var query = Query<Order>.Configure(config => config
+                .OrderBy(order => order.Freight)
+                .ThenByDescending(order => order.ShipVia, Comparer<int?>.Default));
 
             Assert.Equal(2, query.OutputSpecifications.Count);
 
@@ -194,7 +207,8 @@ namespace NCode.QuerySpecifications.Tests
         [Fact]
         public void Build_Page()
         {
-            var query = Query<Order>.Configure(config => config.Page(5, 10));
+            var query = Query<Order>.Configure(config => config
+                .Page(5, 10));
 
             var spec = Assert.Single(query.OutputSpecifications);
 
@@ -210,7 +224,8 @@ namespace NCode.QuerySpecifications.Tests
         [Fact]
         public void Build_Distinct_WithoutComparer()
         {
-            var query = Query<Order>.Configure(config => config.Distinct());
+            var query = Query<Order>.Configure(config => config
+                .Distinct());
 
             var spec = Assert.Single(query.OutputSpecifications);
 
@@ -225,7 +240,8 @@ namespace NCode.QuerySpecifications.Tests
         [Fact]
         public void Build_Distinct_WithComparer()
         {
-            var query = Query<Order>.Configure(config => config.Distinct(EqualityComparer<Order>.Default));
+            var query = Query<Order>.Configure(config => config
+                .Distinct(EqualityComparer<Order>.Default));
 
             var spec = Assert.Single(query.OutputSpecifications);
 
@@ -240,34 +256,36 @@ namespace NCode.QuerySpecifications.Tests
         [Fact]
         public void Build_Select_WithoutInputSpecs_WithoutOutputSpecs()
         {
-            var query = Query<Order>.Configure(config => config.Select(_ => _.Customer));
+            var query = Query<Order>.Configure(config => config
+                .Select(order => order.Customer));
 
             Assert.Empty(query.InputSpecifications);
             Assert.Empty(query.OutputSpecifications);
 
             Assert.Equal("Select", query.TransformSpecification.Name);
-            Assert.IsAssignableFrom<ISelectTransformSpecification<Order, Customer>>(query.TransformSpecification);
+            Assert.IsAssignableFrom<ISelectQuerySpecification<Order, Customer>>(query.TransformSpecification);
         }
 
         [Fact]
         public void Build_Select_WithInputSpecs_WithOutputSpecs()
         {
             var query = Query<Order>.Configure(config => config
-                .Where(_ => _.Freight == 0)
-                .OrderBy(_ => _.OrderDate)
-                .Select(_ => _.Customer)
-                .Output(output => output
-                    .Distinct()));
+                .Where(order => order.Freight == 0)
+                .OrderBy(order => order.OrderDate)
+                .Select(order => order.Customer)
+                .Output(output => output.Distinct().OrderBy(customer => customer.Country).ThenBy(customer => customer.CompanyName)));
 
             Assert.Equal(2, query.InputSpecifications.Count);
             Assert.Equal("Where", query.InputSpecifications[0].Name);
             Assert.Equal("OrderBy", query.InputSpecifications[1].Name);
 
-            Assert.Equal(1, query.OutputSpecifications.Count);
+            Assert.Equal(3, query.OutputSpecifications.Count);
             Assert.Equal("Distinct", query.OutputSpecifications[0].Name);
+            Assert.Equal("OrderBy", query.OutputSpecifications[1].Name);
+            Assert.Equal("OrderBy", query.OutputSpecifications[2].Name);
 
             Assert.Equal("Select", query.TransformSpecification.Name);
-            Assert.IsAssignableFrom<ISelectTransformSpecification<Order, Customer>>(query.TransformSpecification);
+            Assert.IsAssignableFrom<ISelectQuerySpecification<Order, Customer>>(query.TransformSpecification);
         }
 
     }

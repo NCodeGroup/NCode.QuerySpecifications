@@ -3,14 +3,14 @@ using System.Linq.Expressions;
 
 namespace NCode.QuerySpecifications.Specifications
 {
-    public interface ISelectTransformSpecification<TIn, TOut> : ITransformSpecification<TIn, TOut>
+    public interface ISelectQuerySpecification<TIn, TOut> : IQuerySpecification<TIn, TOut>
         where TIn : class
         where TOut : class
     {
         Expression<Func<TIn, TOut>> Selector { get; }
     }
 
-    public class SelectTransformSpecification<TIn, TOut> : ISelectTransformSpecification<TIn, TOut>
+    public class SelectQuerySpecification<TIn, TOut> : ISelectQuerySpecification<TIn, TOut>
         where TIn : class
         where TOut : class
     {
@@ -18,7 +18,7 @@ namespace NCode.QuerySpecifications.Specifications
 
         public Expression<Func<TIn, TOut>> Selector { get; }
 
-        public SelectTransformSpecification(Expression<Func<TIn, TOut>> selector)
+        public SelectQuerySpecification(Expression<Func<TIn, TOut>> selector)
         {
             Selector = selector ?? throw new ArgumentNullException(nameof(selector));
         }
