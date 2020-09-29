@@ -1,9 +1,14 @@
-﻿using NCode.QuerySpecifications.Configuration;
-
-namespace NCode.QuerySpecifications.Specifications
+﻿namespace NCode.QuerySpecifications.Specifications
 {
-    public interface IQuerySpecification<TEntity> : IQueryName, IQueryConfiguration<TEntity>
+    public interface IQuerySpecification<TEntity> : IQueryName
         where TEntity : class
+    {
+        // nothing
+    }
+
+    public interface IQuerySpecification<TIn, TOut> : IQueryName
+        where TIn : class
+        where TOut : class
     {
         // nothing
     }

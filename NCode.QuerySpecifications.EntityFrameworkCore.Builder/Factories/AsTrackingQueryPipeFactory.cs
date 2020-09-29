@@ -10,16 +10,16 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Factories
     {
         public string Name => EntityFrameworkCoreQueryNames.AsTracking;
 
-        public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
+        public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe)
             where TEntity : class
         {
             if (specification is IAsTrackingQuerySpecification<TEntity>)
             {
-                queryPipe = new AsTrackingQueryPipe<TEntity>();
+                pipe = new AsTrackingQueryPipe<TEntity>();
                 return true;
             }
 
-            queryPipe = null;
+            pipe = null;
             return false;
         }
 

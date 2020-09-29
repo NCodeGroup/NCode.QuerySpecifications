@@ -22,19 +22,19 @@ namespace NCode.QuerySpecifications
             return configurator;
         }
 
-        public static IOrderByQueryConfigurator<TEntity> OrderBy<TEntity, TProperty>(this IQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector)
+        public static IOrderedQueryConfigurator<TEntity> OrderBy<TEntity, TProperty>(this IQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector)
             where TEntity : class
         {
             return OrderBy(configurator, keySelector, null, false);
         }
 
-        public static IOrderByQueryConfigurator<TEntity> OrderBy<TEntity, TProperty>(this IQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer)
+        public static IOrderedQueryConfigurator<TEntity> OrderBy<TEntity, TProperty>(this IQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer)
             where TEntity : class
         {
             return OrderBy(configurator, keySelector, comparer, false);
         }
 
-        public static IOrderByQueryConfigurator<TEntity> OrderBy<TEntity, TProperty>(this IQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer, bool descending)
+        public static IOrderedQueryConfigurator<TEntity> OrderBy<TEntity, TProperty>(this IQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer, bool descending)
             where TEntity : class
         {
             if (configurator == null)
@@ -42,38 +42,40 @@ namespace NCode.QuerySpecifications
             if (keySelector == null)
                 throw new ArgumentNullException(nameof(keySelector));
 
-            var nextConfigurator = new OrderByQueryConfigurator<TEntity>(configurator.OutputConfiguration);
-            var specification = new OrderByQuerySpecification<TEntity, TProperty>(nextConfigurator.Specifications, keySelector, comparer, @descending);
+            const bool isRoot = true;
+
+            var specification = new OrderByQuerySpecification<TEntity, TProperty>(keySelector, comparer, @descending, isRoot);
             configurator.AddSpecification(specification);
 
+            var nextConfigurator = new OrderedQueryConfigurator<TEntity>(configurator);
             return nextConfigurator;
         }
 
-        public static IOrderByQueryConfigurator<TEntity> OrderByDescending<TEntity, TProperty>(this IQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector)
+        public static IOrderedQueryConfigurator<TEntity> OrderByDescending<TEntity, TProperty>(this IQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector)
             where TEntity : class
         {
             return OrderBy(configurator, keySelector, null, true);
         }
 
-        public static IOrderByQueryConfigurator<TEntity> OrderByDescending<TEntity, TProperty>(this IQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer)
+        public static IOrderedQueryConfigurator<TEntity> OrderByDescending<TEntity, TProperty>(this IQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer)
             where TEntity : class
         {
             return OrderBy(configurator, keySelector, comparer, true);
         }
 
-        public static IOrderByQueryConfigurator<TEntity> ThenBy<TEntity, TProperty>(this IOrderByQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector)
+        public static IOrderedQueryConfigurator<TEntity> ThenBy<TEntity, TProperty>(this IOrderedQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector)
             where TEntity : class
         {
             return ThenBy(configurator, keySelector, null, false);
         }
 
-        public static IOrderByQueryConfigurator<TEntity> ThenBy<TEntity, TProperty>(this IOrderByQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer)
+        public static IOrderedQueryConfigurator<TEntity> ThenBy<TEntity, TProperty>(this IOrderedQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer)
             where TEntity : class
         {
             return ThenBy(configurator, keySelector, comparer, false);
         }
 
-        public static IOrderByQueryConfigurator<TEntity> ThenBy<TEntity, TProperty>(this IOrderByQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer, bool descending)
+        public static IOrderedQueryConfigurator<TEntity> ThenBy<TEntity, TProperty>(this IOrderedQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer, bool descending)
             where TEntity : class
         {
             if (configurator == null)
@@ -81,20 +83,21 @@ namespace NCode.QuerySpecifications
             if (keySelector == null)
                 throw new ArgumentNullException(nameof(keySelector));
 
-            var nextConfigurator = new OrderByQueryConfigurator<TEntity>(configurator.OutputConfiguration);
-            var specification = new OrderByQuerySpecification<TEntity, TProperty>(nextConfigurator.Specifications, keySelector, comparer, @descending);
+            const bool isRoot = false;
+
+            var specification = new OrderByQuerySpecification<TEntity, TProperty>(keySelector, comparer, @descending, isRoot);
             configurator.AddSpecification(specification);
 
-            return nextConfigurator;
+            return configurator;
         }
 
-        public static IOrderByQueryConfigurator<TEntity> ThenByDescending<TEntity, TProperty>(this IOrderByQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector)
+        public static IOrderedQueryConfigurator<TEntity> ThenByDescending<TEntity, TProperty>(this IOrderedQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector)
             where TEntity : class
         {
             return ThenBy(configurator, keySelector, null, true);
         }
 
-        public static IOrderByQueryConfigurator<TEntity> ThenByDescending<TEntity, TProperty>(this IOrderByQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer)
+        public static IOrderedQueryConfigurator<TEntity> ThenByDescending<TEntity, TProperty>(this IOrderedQueryConfigurator<TEntity> configurator, Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer)
             where TEntity : class
         {
             return ThenBy(configurator, keySelector, comparer, true);
@@ -130,7 +133,7 @@ namespace NCode.QuerySpecifications
             return configurator;
         }
 
-        public static ITransformConfigurator<TIn, TOut> Select<TIn, TOut>(this IQueryConfigurator<TIn> configurator, Expression<Func<TIn, TOut>> selector)
+        public static IQueryConfigurator<TIn, TOut> Select<TIn, TOut>(this IQueryConfigurator<TIn> configurator, Expression<Func<TIn, TOut>> selector)
             where TIn : class
             where TOut : class
         {
@@ -139,25 +142,22 @@ namespace NCode.QuerySpecifications
             if (selector == null)
                 throw new ArgumentNullException(nameof(selector));
 
-            var inputSpecifications = configurator.OutputConfiguration.OutputSpecifications;
-            var outputSpecifications = new List<IQuerySpecification<TOut>>();
-
-            var transformSpecification = new SelectTransformSpecification<TIn, TOut>(selector, inputSpecifications, outputSpecifications);
-            var nextConfigurator = new TransformConfigurator<TIn, TOut>(transformSpecification, inputSpecifications, outputSpecifications);
+            var transformSpecification = new SelectQuerySpecification<TIn, TOut>(selector);
+            var nextConfigurator = new QueryConfigurator<TIn, TOut>(configurator, transformSpecification);
 
             return nextConfigurator;
         }
 
-        public static ITransformConfigurator<TIn, TOut> Output<TIn, TOut>(this ITransformConfigurator<TIn, TOut> configurator, Action<IQueryConfigurator<TOut>> callback)
+        public static IQueryConfigurator<TIn, TOut> Output<TIn, TOut>(this IQueryConfigurator<TIn, TOut> configurator, Action<IQueryConfigurator<TOut>> configureCallback)
             where TIn : class
             where TOut : class
         {
             if (configurator == null)
                 throw new ArgumentNullException(nameof(configurator));
-            if (callback == null)
-                throw new ArgumentNullException(nameof(callback));
+            if (configureCallback == null)
+                throw new ArgumentNullException(nameof(configureCallback));
 
-            callback(configurator);
+            configureCallback(configurator);
 
             return configurator;
         }

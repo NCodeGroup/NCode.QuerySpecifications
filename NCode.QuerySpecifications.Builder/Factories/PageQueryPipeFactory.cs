@@ -7,16 +7,16 @@ namespace NCode.QuerySpecifications.Builder.Factories
     {
         public string Name => QueryNames.Page;
 
-        public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
+        public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe)
             where TEntity : class
         {
             if (specification is IPageQuerySpecification<TEntity> pageSpec)
             {
-                queryPipe = new PageQueryPipe<TEntity>(pageSpec.Skip, pageSpec.Take);
+                pipe = new PageQueryPipe<TEntity>(pageSpec.Skip, pageSpec.Take);
                 return true;
             }
 
-            queryPipe = null;
+            pipe = null;
             return false;
         }
 

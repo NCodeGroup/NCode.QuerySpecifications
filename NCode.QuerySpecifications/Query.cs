@@ -7,23 +7,29 @@ namespace NCode.QuerySpecifications
     public static class Query<TEntity>
         where TEntity : class
     {
-        public static IQueryConfiguration<TEntity> Build(Func<IQueryConfigurator<TEntity>, IQueryConfigurator<TEntity>> callback)
+        public static IQueryConfiguration<TEntity> Configure(Func<IQueryConfigurator<TEntity>, IQueryConfigurator<TEntity>> configureCallback)
         {
-            var input = new QueryConfiguration<TEntity>();
+            if (configureCallback == null)
+                throw new ArgumentNullException(nameof(configureCallback));
 
-            var output = callback(input);
+            var inputConfigurator = new QueryConfigurator<TEntity>();
 
-            return output.OutputConfiguration;
+            var outputConfigurator = configureCallback(inputConfigurator);
+
+            return outputConfigurator.OutputConfiguration;
         }
 
-        public static ITransformConfiguration<TEntity, TOut> Build<TOut>(Func<IQueryConfigurator<TEntity>, ITransformConfigurator<TEntity, TOut>> callback)
+        public static IQueryConfiguration<TEntity, TOut> Configure<TOut>(Func<IQueryConfigurator<TEntity>, IQueryConfigurator<TEntity, TOut>> configureCallback)
             where TOut : class
         {
-            var input = new QueryConfiguration<TEntity>();
+            if (configureCallback == null)
+                throw new ArgumentNullException(nameof(configureCallback));
 
-            var output = callback(input);
+            var inputConfigurator = new QueryConfigurator<TEntity>();
 
-            return output.TransformConfiguration;
+            var transformConfigurator = configureCallback(inputConfigurator);
+
+            return transformConfigurator.TransformConfiguration;
         }
 
     }

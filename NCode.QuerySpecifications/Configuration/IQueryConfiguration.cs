@@ -8,4 +8,13 @@ namespace NCode.QuerySpecifications.Configuration
     {
         IReadOnlyList<IQuerySpecification<TEntity>> OutputSpecifications { get; }
     }
+
+    public interface IQueryConfiguration<TIn, TOut> : IQueryConfiguration<TOut>
+        where TIn : class
+        where TOut : class
+    {
+        IQuerySpecification<TIn, TOut> TransformSpecification { get; }
+
+        IReadOnlyList<IQuerySpecification<TIn>> InputSpecifications { get; }
+    }
 }

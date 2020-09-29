@@ -13,7 +13,7 @@ namespace NCode.QuerySpecifications.Builder.Pipes
             _comparer = comparer;
         }
 
-        public virtual IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
+        public IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
         {
             return _comparer == null
                 ? queryRoot.Distinct()

@@ -5,7 +5,7 @@ namespace NCode.QuerySpecifications.Builder.Factories
 {
     public interface IQueryPipeFactory : IQueryName
     {
-        bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
+        bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe)
             where TEntity : class;
     }
 }

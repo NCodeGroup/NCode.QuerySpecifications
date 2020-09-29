@@ -10,16 +10,16 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Factories
     {
         public string Name => EntityFrameworkCoreQueryNames.AsNoTracking;
 
-        public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
+        public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe)
             where TEntity : class
         {
             if (specification is IAsNoTrackingQuerySpecification<TEntity>)
             {
-                queryPipe = new AsNoTrackingQueryPipe<TEntity>();
+                pipe = new AsNoTrackingQueryPipe<TEntity>();
                 return true;
             }
 
-            queryPipe = null;
+            pipe = null;
             return false;
         }
 

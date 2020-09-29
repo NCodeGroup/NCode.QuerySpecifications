@@ -8,16 +8,17 @@ namespace NCode.QuerySpecifications.Specifications
         IEqualityComparer<TEntity> Comparer { get; }
     }
 
-    public class DistinctQuerySpecification<TEntity> : QuerySpecificationBase<TEntity>, IDistinctQuerySpecification<TEntity>
+    public class DistinctQuerySpecification<TEntity> : IDistinctQuerySpecification<TEntity>
         where TEntity : class
     {
+        public string Name => QueryNames.Distinct;
+
+        public IEqualityComparer<TEntity> Comparer { get; }
+
         public DistinctQuerySpecification(IEqualityComparer<TEntity> comparer)
         {
             Comparer = comparer;
         }
 
-        public override string Name => QueryNames.Distinct;
-
-        public IEqualityComparer<TEntity> Comparer { get; }
     }
 }

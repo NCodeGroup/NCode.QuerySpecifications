@@ -15,7 +15,7 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Pipes
             _tag = tag ?? throw new ArgumentNullException(nameof(tag));
         }
 
-        public virtual IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
+        public IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
         {
             return queryRoot.TagWith(_tag);
         }

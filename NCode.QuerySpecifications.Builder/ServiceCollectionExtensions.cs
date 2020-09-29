@@ -7,15 +7,17 @@ namespace NCode.QuerySpecifications.Builder
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollectionQueryBuilder AddQueryBuilder(this IServiceCollection services)
+        public static IServiceCollection AddQueryBuilder(this IServiceCollection services, Action<IServiceCollectionQueryBuilder> configureCallback)
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
 
             services.TryAddTransient<IQueryBuilder, QueryBuilder>();
-            services.TryAddTransient<ICompositeQueryFactory, CompositeQueryFactory>();
+            services.TryAddTransient<ICompositeQueryPipeFactory, CompositeQueryPipeFactory>();
 
             var builder = new ServiceCollectionQueryBuilder(services);
+
+            configureCallback(builder);
 
             // IQueryPipeFactory
             builder.AddPipeFactory<WhereQueryPipeFactory>();
@@ -23,10 +25,10 @@ namespace NCode.QuerySpecifications.Builder
             builder.AddPipeFactory<OrderByQueryPipeFactory>();
             builder.AddPipeFactory<DistinctQueryPipeFactory>();
 
-            // IQueryTransformFactory
-            builder.AddTransformFactory<SelectQueryTransformFactory>();
+            // IQueryPipeTransformFactory
+            builder.AddPipeTransformFactory<SelectQueryPipeFactory>();
 
-            return builder;
+            return services;
         }
 
     }

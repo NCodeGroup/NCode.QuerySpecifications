@@ -8,9 +8,9 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Specifications
         // nothing
     }
 
-    public class IgnoreQueryFiltersQuerySpecification<TEntity> : QuerySpecificationBase<TEntity>, IIgnoreQueryFiltersQuerySpecification<TEntity>
+    public class IgnoreQueryFiltersQuerySpecification<TEntity> : IIgnoreQueryFiltersQuerySpecification<TEntity>
         where TEntity : class
     {
-        public override string Name => EntityFrameworkCoreQueryNames.IgnoreQueryFilters;
+        public string Name => EntityFrameworkCoreQueryNames.IgnoreQueryFilters;
     }
 }

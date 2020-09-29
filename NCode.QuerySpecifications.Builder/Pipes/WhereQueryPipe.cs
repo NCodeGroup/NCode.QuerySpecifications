@@ -14,7 +14,7 @@ namespace NCode.QuerySpecifications.Builder.Pipes
             _predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
         }
 
-        public virtual IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
+        public IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
         {
             return queryRoot.Where(_predicate);
         }

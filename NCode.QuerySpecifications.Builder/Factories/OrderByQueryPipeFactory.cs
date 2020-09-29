@@ -8,17 +8,17 @@ namespace NCode.QuerySpecifications.Builder.Factories
     {
         public string Name => QueryNames.OrderBy;
 
-        public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
+        public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe)
             where TEntity : class
         {
             if (specification is IOrderByQuerySpecification<TEntity> orderBySpec)
             {
                 var factoryType = typeof(Factory<>).MakeGenericType(orderBySpec.PropertyType);
                 var factory = (IQueryPipeFactory)Activator.CreateInstance(factoryType);
-                return factory.TryCreate(specification, out queryPipe);
+                return factory.TryCreate(specification, out pipe);
             }
 
-            queryPipe = null;
+            pipe = null;
             return false;
         }
 
@@ -26,16 +26,16 @@ namespace NCode.QuerySpecifications.Builder.Factories
         {
             public string Name => QueryNames.OrderBy;
 
-            public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
+            public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe)
                 where TEntity : class
             {
                 if (specification is IOrderByQuerySpecification<TEntity, TProperty> orderBySpec)
                 {
-                    queryPipe = new OrderByQueryPipe<TEntity, TProperty>(orderBySpec.KeySelector, orderBySpec.Comparer, orderBySpec.Descending);
+                    pipe = new OrderByQueryPipe<TEntity, TProperty>(orderBySpec.KeySelector, orderBySpec.Comparer, orderBySpec.Descending, orderBySpec.IsRoot);
                     return true;
                 }
 
-                queryPipe = null;
+                pipe = null;
                 return false;
             }
         }

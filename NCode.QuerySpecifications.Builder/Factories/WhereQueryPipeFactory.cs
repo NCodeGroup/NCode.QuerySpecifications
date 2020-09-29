@@ -7,16 +7,16 @@ namespace NCode.QuerySpecifications.Builder.Factories
     {
         public string Name => QueryNames.Where;
 
-        public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
+        public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe)
             where TEntity : class
         {
             if (specification is IWhereQuerySpecification<TEntity> whereSpec)
             {
-                queryPipe = new WhereQueryPipe<TEntity>(whereSpec.Predicate);
+                pipe = new WhereQueryPipe<TEntity>(whereSpec.Predicate);
                 return true;
             }
 
-            queryPipe = null;
+            pipe = null;
             return false;
         }
 
