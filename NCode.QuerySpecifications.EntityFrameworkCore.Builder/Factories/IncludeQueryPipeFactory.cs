@@ -17,28 +17,33 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Factories
             switch (specification)
             {
                 case IIncludePathQuerySpecification<TEntity> includePathSpec:
-                    {
-                        pipe = new IncludePathQueryPipe<TEntity>(includePathSpec.NavigationPropertyPath);
-                        return true;
-                    }
+                    pipe = new IncludePathQueryPipe<TEntity>(includePathSpec.NavigationPropertyPath);
+                    return true;
 
                 case IIncludePropertyQuerySpecification<TEntity> includePropertySpec when includePropertySpec.IsRoot:
-                    {
-                        var factoryType = typeof(RootFactory<>).MakeGenericType(includePropertySpec.OutputPropertyType);
-                        var factory = (IQueryPipeFactory)Activator.CreateInstance(factoryType);
-                        return factory.TryCreate(specification, out pipe);
-                    }
+                    return TryCreateRoot(includePropertySpec, out pipe);
 
                 case IIncludePropertyQuerySpecification<TEntity> includePropertySpec:
-                    {
-                        var factoryType = typeof(ThenFactory<,>).MakeGenericType(includePropertySpec.InputPropertyType, includePropertySpec.OutputPropertyType);
-                        var factory = (IQueryPipeFactory)Activator.CreateInstance(factoryType);
-                        return factory.TryCreate(specification, out pipe);
-                    }
+                    return TryCreateThen(includePropertySpec, out pipe);
             }
 
             pipe = null;
             return false;
+        }
+
+        private static bool TryCreateRoot<TEntity>(IIncludePropertyQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe) where TEntity : class
+        {
+            var factoryType = typeof(RootFactory<>).MakeGenericType(specification.OutputPropertyType);
+            var factory = (IQueryPipeFactory)Activator.CreateInstance(factoryType);
+            return factory.TryCreate(specification, out pipe);
+        }
+
+        private static bool TryCreateThen<TEntity>(IIncludePropertyQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe)
+            where TEntity : class
+        {
+            var factoryType = typeof(ThenFactory<,>).MakeGenericType(specification.InputPropertyType, specification.OutputPropertyType);
+            var factory = (IQueryPipeFactory)Activator.CreateInstance(factoryType);
+            return factory.TryCreate(specification, out pipe);
         }
 
         private class RootFactory<TProperty> : IQueryPipeFactory
