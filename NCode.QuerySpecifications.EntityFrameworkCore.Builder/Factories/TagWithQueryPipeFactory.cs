@@ -10,16 +10,16 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Factories
     {
         public string Name => EntityFrameworkCoreQueryNames.TagWith;
 
-        public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
+        public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe)
             where TEntity : class
         {
             if (specification is ITagWithQuerySpecification<TEntity> tagWithSpec)
             {
-                queryPipe = new TagWithQueryPipe<TEntity>(tagWithSpec.Tag);
+                pipe = new TagWithQueryPipe<TEntity>(tagWithSpec.Tag);
                 return true;
             }
 
-            queryPipe = null;
+            pipe = null;
             return false;
         }
 

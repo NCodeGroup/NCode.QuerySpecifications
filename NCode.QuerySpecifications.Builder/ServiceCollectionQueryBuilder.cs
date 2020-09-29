@@ -23,14 +23,14 @@ namespace NCode.QuerySpecifications.Builder
 
         public IServiceCollection ServiceCollection { get; }
 
-        public virtual IServiceCollectionQueryBuilder AddPipeFactory<TFactory>()
+        public IServiceCollectionQueryBuilder AddPipeFactory<TFactory>()
             where TFactory : class, IQueryPipeFactory
         {
             ServiceCollection.TryAddEnumerable(ServiceDescriptor.Transient<IQueryPipeFactory, TFactory>());
             return this;
         }
 
-        public virtual IServiceCollectionQueryBuilder AddTransformFactory<TFactory>()
+        public IServiceCollectionQueryBuilder AddTransformFactory<TFactory>()
             where TFactory : class, IQueryTransformFactory
         {
             ServiceCollection.TryAddEnumerable(ServiceDescriptor.Transient<IQueryTransformFactory, TFactory>());

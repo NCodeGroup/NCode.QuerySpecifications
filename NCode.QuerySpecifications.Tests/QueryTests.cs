@@ -1,173 +1,274 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.TestModels.Northwind;
 using NCode.QuerySpecifications.Specifications;
 using Xunit;
 
 namespace NCode.QuerySpecifications.Tests
 {
-	public class QueryTests
-	{
-		[Fact]
-		public void Build_Where()
-		{
-			var query = Query<Order>.Build(config => config.Where(_ => _.Freight == 0));
+    public class QueryTests
+    {
+        [Fact]
+        public void Build_Where()
+        {
+            var query = Query<Order>.Configure(config => config.Where(_ => _.Freight == 0));
 
-			var spec = Assert.Single(query.OutputSpecifications);
+            var spec = Assert.Single(query.OutputSpecifications);
 
-			Assert.NotNull(spec);
-			Assert.Equal("Where", spec.Name);
-			Assert.Empty(spec.OutputSpecifications);
-			Assert.IsAssignableFrom<IWhereQuerySpecification<Order>>(spec);
-		}
+            Assert.NotNull(spec);
+            Assert.Equal("Where", spec.Name);
+            Assert.IsAssignableFrom<IWhereQuerySpecification<Order>>(spec);
+        }
 
-		[Fact]
-		public void Build_OrderByAscending()
-		{
-			var query = Query<Order>.Build(config => config.OrderBy(_ => _.Freight));
+        [Fact]
+        public void Build_OrderByAscending_WithoutComparer()
+        {
+            var query = Query<Order>.Configure(config => config.OrderBy(_ => _.Freight));
 
-			var spec = Assert.Single(query.OutputSpecifications);
+            var spec = Assert.Single(query.OutputSpecifications);
 
-			Assert.NotNull(spec);
-			Assert.Equal("OrderBy", spec.Name);
-			Assert.Empty(spec.OutputSpecifications);
+            Assert.NotNull(spec);
+            Assert.Equal("OrderBy", spec.Name);
 
-			var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec);
+            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec);
 
-			Assert.False(orderBySpec.Descending);
-			Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
-			Assert.Null(orderBySpec.Comparer);
-		}
+            Assert.False(orderBySpec.Descending);
+            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
+            Assert.Null(orderBySpec.Comparer);
+        }
 
-		[Fact]
-		public void Build_OrderByAscending_Comparer()
-		{
-			var query = Query<Order>.Build(config => config.OrderBy(_ => _.Freight, Comparer<decimal?>.Default));
+        [Fact]
+        public void Build_OrderByAscending_WithComparer()
+        {
+            var query = Query<Order>.Configure(config => config.OrderBy(_ => _.Freight, Comparer<decimal?>.Default));
 
-			var spec = Assert.Single(query.OutputSpecifications);
+            var spec = Assert.Single(query.OutputSpecifications);
 
-			Assert.NotNull(spec);
-			Assert.Equal("OrderBy", spec.Name);
-			Assert.Empty(spec.OutputSpecifications);
+            Assert.NotNull(spec);
+            Assert.Equal("OrderBy", spec.Name);
 
-			var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec);
+            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec);
 
-			Assert.False(orderBySpec.Descending);
-			Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
-			Assert.Same(Comparer<decimal?>.Default, orderBySpec.Comparer);
-		}
+            Assert.False(orderBySpec.Descending);
+            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
+            Assert.Same(Comparer<decimal?>.Default, orderBySpec.Comparer);
+        }
 
-		[Fact]
-		public void Build_OrderByDescending()
-		{
-			var query = Query<Order>.Build(config => config.OrderByDescending(_ => _.Freight, Comparer<decimal?>.Default));
+        [Fact]
+        public void Build_OrderByDescending_WithoutComparer()
+        {
+            var query = Query<Order>.Configure(config => config.OrderByDescending(_ => _.Freight));
 
-			var spec = Assert.Single(query.OutputSpecifications);
+            var spec = Assert.Single(query.OutputSpecifications);
 
-			Assert.NotNull(spec);
-			Assert.Equal("OrderBy", spec.Name);
-			Assert.Empty(spec.OutputSpecifications);
+            Assert.NotNull(spec);
+            Assert.Equal("OrderBy", spec.Name);
 
-			var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec);
+            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec);
 
-			Assert.True(orderBySpec.Descending);
-			Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
-			Assert.Same(Comparer<decimal?>.Default, orderBySpec.Comparer);
-		}
+            Assert.True(orderBySpec.Descending);
+            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
+            Assert.Null(orderBySpec.Comparer);
+        }
 
-		[Fact]
-		public void Build_OrderByAscending_ThenBy()
-		{
-			var query = Query<Order>.Build(config => config.OrderBy(_ => _.Freight).ThenBy(_ => _.ShipVia, Comparer<int?>.Default));
+        [Fact]
+        public void Build_OrderByDescending_WithComparer()
+        {
+            var query = Query<Order>.Configure(config => config.OrderByDescending(_ => _.Freight, Comparer<decimal?>.Default));
 
-			var spec1 = Assert.Single(query.OutputSpecifications);
-			Assert.NotNull(spec1);
-			Assert.Equal("OrderBy", spec1.Name);
+            var spec = Assert.Single(query.OutputSpecifications);
 
-			var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec1);
-			Assert.False(orderBySpec.Descending);
-			Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
-			Assert.Null(orderBySpec.Comparer);
+            Assert.NotNull(spec);
+            Assert.Equal("OrderBy", spec.Name);
 
-			var spec2 = Assert.Single(orderBySpec.OutputSpecifications);
-			Assert.NotNull(spec2);
-			Assert.Equal("OrderBy", spec2.Name);
+            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec);
 
-			var thenBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, int?>>(spec2);
-			Assert.False(thenBySpec.Descending);
-			Assert.Equal(typeof(int?), thenBySpec.PropertyType);
-			Assert.Same(Comparer<int?>.Default, thenBySpec.Comparer);
-		}
+            Assert.True(orderBySpec.Descending);
+            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
+            Assert.Same(Comparer<decimal?>.Default, orderBySpec.Comparer);
+        }
 
-		[Fact]
-		public void Build_Page()
-		{
-			var query = Query<Order>.Build(config => config.Page(5, 10));
+        [Fact]
+        public void Build_OrderByAscending_ThenByAscending_WithoutComparer()
+        {
+            var query = Query<Order>.Configure(config => config.OrderBy(_ => _.Freight).ThenBy(_ => _.ShipVia));
 
-			var spec = Assert.Single(query.OutputSpecifications);
+            Assert.Equal(2, query.OutputSpecifications.Count);
 
-			Assert.NotNull(spec);
-			Assert.Equal("Page", spec.Name);
-			Assert.Empty(spec.OutputSpecifications);
+            var spec1 = query.OutputSpecifications[0];
+            Assert.NotNull(spec1);
+            Assert.Equal("OrderBy", spec1.Name);
 
-			var pageSpec = Assert.IsAssignableFrom<IPageQuerySpecification<Order>>(spec);
+            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec1);
+            Assert.False(orderBySpec.Descending);
+            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
+            Assert.Null(orderBySpec.Comparer);
 
-			Assert.Equal(5, pageSpec.Skip);
-			Assert.Equal(10, pageSpec.Take);
-		}
+            var spec2 = query.OutputSpecifications[1];
+            Assert.NotNull(spec2);
+            Assert.Equal("OrderBy", spec2.Name);
 
-		[Fact]
-		public void Build_Distinct()
-		{
-			var query = Query<Order>.Build(config => config.Distinct(EqualityComparer<Order>.Default));
+            var thenBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, int?>>(spec2);
+            Assert.False(thenBySpec.Descending);
+            Assert.Equal(typeof(int?), thenBySpec.PropertyType);
+            Assert.Null(thenBySpec.Comparer);
+        }
 
-			var spec = Assert.Single(query.OutputSpecifications);
+        [Fact]
+        public void Build_OrderByAscending_ThenByAscending_WithComparer()
+        {
+            var query = Query<Order>.Configure(config => config.OrderBy(_ => _.Freight).ThenBy(_ => _.ShipVia, Comparer<int?>.Default));
 
-			Assert.NotNull(spec);
-			Assert.Equal("Distinct", spec.Name);
-			Assert.Empty(spec.OutputSpecifications);
+            Assert.Equal(2, query.OutputSpecifications.Count);
 
-			var distinctSpec = Assert.IsAssignableFrom<IDistinctQuerySpecification<Order>>(spec);
+            var spec1 = query.OutputSpecifications[0];
+            Assert.NotNull(spec1);
+            Assert.Equal("OrderBy", spec1.Name);
 
-			Assert.Same(EqualityComparer<Order>.Default, distinctSpec.Comparer);
-		}
+            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec1);
+            Assert.False(orderBySpec.Descending);
+            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
+            Assert.Null(orderBySpec.Comparer);
 
-		[Fact]
-		public void Build_Select()
-		{
-			var query = Query<Order>.Build(config => config.Select(_ => _.Customer));
+            var spec2 = query.OutputSpecifications[1];
+            Assert.NotNull(spec2);
+            Assert.Equal("OrderBy", spec2.Name);
 
-			Assert.Empty(query.InputSpecifications);
-			Assert.Empty(query.OutputSpecifications);
+            var thenBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, int?>>(spec2);
+            Assert.False(thenBySpec.Descending);
+            Assert.Equal(typeof(int?), thenBySpec.PropertyType);
+            Assert.Same(Comparer<int?>.Default, thenBySpec.Comparer);
+        }
 
-			Assert.Equal("Select", query.TransformSpecification.Name);
-			Assert.Same(query.InputSpecifications, query.TransformSpecification.InputSpecifications);
-			Assert.Same(query.OutputSpecifications, query.TransformSpecification.OutputSpecifications);
+        [Fact]
+        public void Build_OrderByAscending_ThenByDescending_WithoutComparer()
+        {
+            var query = Query<Order>.Configure(config => config.OrderBy(_ => _.Freight).ThenByDescending(_ => _.ShipVia));
 
-			Assert.IsAssignableFrom<ISelectTransformSpecification<Order, Customer>>(query.TransformSpecification);
-		}
+            Assert.Equal(2, query.OutputSpecifications.Count);
 
-		[Fact]
-		public void Build_Select_InputAndOutput()
-		{
-			var query = Query<Order>.Build(config =>
-			{
-				return config
-					.Where(_ => _.Freight == 0)
-					.OrderBy(_ => _.OrderDate)
-					.Select(_ => _.Customer)
-					.Output(output => output
-						.OrderBy(_ => _.ContactName));
-			});
+            var spec1 = query.OutputSpecifications[0];
+            Assert.NotNull(spec1);
+            Assert.Equal("OrderBy", spec1.Name);
 
-			Assert.Equal(2, query.InputSpecifications.Count);
-			Assert.Single(query.OutputSpecifications);
+            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec1);
+            Assert.False(orderBySpec.Descending);
+            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
+            Assert.Null(orderBySpec.Comparer);
 
-			Assert.Equal("Select", query.TransformSpecification.Name);
-			Assert.Same(query.InputSpecifications, query.TransformSpecification.InputSpecifications);
-			Assert.Same(query.OutputSpecifications, query.TransformSpecification.OutputSpecifications);
+            var spec2 = query.OutputSpecifications[1];
+            Assert.NotNull(spec2);
+            Assert.Equal("OrderBy", spec2.Name);
 
-			Assert.IsAssignableFrom<ISelectTransformSpecification<Order, Customer>>(query.TransformSpecification);
-		}
+            var thenBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, int?>>(spec2);
+            Assert.True(thenBySpec.Descending);
+            Assert.Equal(typeof(int?), thenBySpec.PropertyType);
+            Assert.Null(thenBySpec.Comparer);
+        }
 
-	}
+        [Fact]
+        public void Build_OrderByAscending_ThenByDescending_WithComparer()
+        {
+            var query = Query<Order>.Configure(config => config.OrderBy(_ => _.Freight).ThenByDescending(_ => _.ShipVia, Comparer<int?>.Default));
+
+            Assert.Equal(2, query.OutputSpecifications.Count);
+
+            var spec1 = query.OutputSpecifications[0];
+            Assert.NotNull(spec1);
+            Assert.Equal("OrderBy", spec1.Name);
+
+            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec1);
+            Assert.False(orderBySpec.Descending);
+            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
+            Assert.Null(orderBySpec.Comparer);
+
+            var spec2 = query.OutputSpecifications[1];
+            Assert.NotNull(spec2);
+            Assert.Equal("OrderBy", spec2.Name);
+
+            var thenBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, int?>>(spec2);
+            Assert.True(thenBySpec.Descending);
+            Assert.Equal(typeof(int?), thenBySpec.PropertyType);
+            Assert.Same(Comparer<int?>.Default, thenBySpec.Comparer);
+        }
+
+        [Fact]
+        public void Build_Page()
+        {
+            var query = Query<Order>.Configure(config => config.Page(5, 10));
+
+            var spec = Assert.Single(query.OutputSpecifications);
+
+            Assert.NotNull(spec);
+            Assert.Equal("Page", spec.Name);
+
+            var pageSpec = Assert.IsAssignableFrom<IPageQuerySpecification<Order>>(spec);
+
+            Assert.Equal(5, pageSpec.Skip);
+            Assert.Equal(10, pageSpec.Take);
+        }
+
+        [Fact]
+        public void Build_Distinct_WithoutComparer()
+        {
+            var query = Query<Order>.Configure(config => config.Distinct());
+
+            var spec = Assert.Single(query.OutputSpecifications);
+
+            Assert.NotNull(spec);
+            Assert.Equal("Distinct", spec.Name);
+
+            var distinctSpec = Assert.IsAssignableFrom<IDistinctQuerySpecification<Order>>(spec);
+
+            Assert.Null(distinctSpec.Comparer);
+        }
+
+        [Fact]
+        public void Build_Distinct_WithComparer()
+        {
+            var query = Query<Order>.Configure(config => config.Distinct(EqualityComparer<Order>.Default));
+
+            var spec = Assert.Single(query.OutputSpecifications);
+
+            Assert.NotNull(spec);
+            Assert.Equal("Distinct", spec.Name);
+
+            var distinctSpec = Assert.IsAssignableFrom<IDistinctQuerySpecification<Order>>(spec);
+
+            Assert.Same(EqualityComparer<Order>.Default, distinctSpec.Comparer);
+        }
+
+        [Fact]
+        public void Build_Select_WithoutInputSpecs_WithoutOutputSpecs()
+        {
+            var query = Query<Order>.Configure(config => config.Select(_ => _.Customer));
+
+            Assert.Empty(query.InputSpecifications);
+            Assert.Empty(query.OutputSpecifications);
+
+            Assert.Equal("Select", query.TransformSpecification.Name);
+            Assert.IsAssignableFrom<ISelectTransformSpecification<Order, Customer>>(query.TransformSpecification);
+        }
+
+        [Fact]
+        public void Build_Select_WithInputSpecs_WithOutputSpecs()
+        {
+            var query = Query<Order>.Configure(config => config
+                .Where(_ => _.Freight == 0)
+                .OrderBy(_ => _.OrderDate)
+                .Select(_ => _.Customer)
+                .Output(output => output
+                    .Distinct()));
+
+            Assert.Equal(2, query.InputSpecifications.Count);
+            Assert.Equal("Where", query.InputSpecifications[0].Name);
+            Assert.Equal("OrderBy", query.InputSpecifications[1].Name);
+
+            Assert.Equal(1, query.OutputSpecifications.Count);
+            Assert.Equal("Distinct", query.OutputSpecifications[0].Name);
+
+            Assert.Equal("Select", query.TransformSpecification.Name);
+            Assert.IsAssignableFrom<ISelectTransformSpecification<Order, Customer>>(query.TransformSpecification);
+        }
+
+    }
 }

@@ -7,25 +7,24 @@ using Xunit;
 
 namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Tests.Pipes
 {
-	public class IgnoreQueryFiltersQueryPipeTests
-	{
-		[Fact]
-		public void Apply_IgnoresQueryFilter()
-		{
-			var pipe = new IgnoreQueryFiltersQueryPipe<CustomerQuery>();
+    public class IgnoreQueryFiltersQueryPipeTests
+    {
+        [Fact]
+        public void Apply_IgnoresQueryFilter()
+        {
+            var pipe = new IgnoreQueryFiltersQueryPipe<CustomerQuery>();
 
-			using (var fixture = new NorthwindQueryInMemoryFixture<NoopModelCustomizer>())
-			using (var context = fixture.CreateContext())
-			{
-				var queryRoot = context.Query<CustomerQuery>();
+            using var fixture = new NorthwindQueryInMemoryFixture<NoopModelCustomizer>();
+            using var context = fixture.CreateContext();
 
-				var countBefore = queryRoot.Count();
-				Assert.NotEqual(0, countBefore);
+            var queryRoot = context.Set<CustomerQuery>();
 
-				var countAfter = pipe.Apply(queryRoot).Count();
-				Assert.NotEqual(countBefore, countAfter);
-			}
-		}
+            var countBefore = queryRoot.Count();
+            Assert.NotEqual(0, countBefore);
 
-	}
+            var countAfter = pipe.Apply(queryRoot).Count();
+            Assert.NotEqual(countBefore, countAfter);
+        }
+
+    }
 }

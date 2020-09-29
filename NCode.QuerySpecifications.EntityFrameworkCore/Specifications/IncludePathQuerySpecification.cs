@@ -9,16 +9,17 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Specifications
         string NavigationPropertyPath { get; }
     }
 
-    public class IncludePathQuerySpecification<TEntity> : QuerySpecificationBase<TEntity>, IIncludePathQuerySpecification<TEntity>
+    public class IncludePathQuerySpecification<TEntity> : IIncludePathQuerySpecification<TEntity>
         where TEntity : class
     {
+        public string Name => EntityFrameworkCoreQueryNames.Include;
+
+        public string NavigationPropertyPath { get; }
+
         public IncludePathQuerySpecification(string navigationPropertyPath)
         {
             NavigationPropertyPath = navigationPropertyPath ?? throw new ArgumentNullException(nameof(navigationPropertyPath));
         }
 
-        public override string Name => EntityFrameworkCoreQueryNames.Include;
-
-        public string NavigationPropertyPath { get; }
     }
 }

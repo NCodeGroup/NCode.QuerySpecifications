@@ -9,10 +9,10 @@ namespace NCode.QuerySpecifications.Specifications
         Expression<Func<TEntity, bool>> Predicate { get; }
     }
 
-    public class WhereQuerySpecification<TEntity> : QuerySpecificationBase<TEntity>, IWhereQuerySpecification<TEntity>
+    public class WhereQuerySpecification<TEntity> : IWhereQuerySpecification<TEntity>
         where TEntity : class
     {
-        public override string Name => QueryNames.Where;
+        public string Name => QueryNames.Where;
 
         public Expression<Func<TEntity, bool>> Predicate { get; }
 

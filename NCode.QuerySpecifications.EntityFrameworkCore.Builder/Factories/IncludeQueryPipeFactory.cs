@@ -11,50 +11,50 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Factories
     {
         public string Name => EntityFrameworkCoreQueryNames.Include;
 
-        public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
+        public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe)
             where TEntity : class
         {
             switch (specification)
             {
                 case IIncludePathQuerySpecification<TEntity> includePathSpec:
                     {
-                        queryPipe = new IncludePathQueryPipe<TEntity>(includePathSpec.NavigationPropertyPath);
+                        pipe = new IncludePathQueryPipe<TEntity>(includePathSpec.NavigationPropertyPath);
                         return true;
                     }
 
                 case IIncludePropertyQuerySpecification<TEntity> includePropertySpec when includePropertySpec.IsRoot:
                     {
-                        var factoryType = typeof(PropertyFactory<>).MakeGenericType(includePropertySpec.OutputPropertyType);
+                        var factoryType = typeof(RootFactory<>).MakeGenericType(includePropertySpec.OutputPropertyType);
                         var factory = (IQueryPipeFactory)Activator.CreateInstance(factoryType);
-                        return factory.TryCreate(specification, out queryPipe);
+                        return factory.TryCreate(specification, out pipe);
                     }
 
                 case IIncludePropertyQuerySpecification<TEntity> includePropertySpec:
                     {
                         var factoryType = typeof(ThenFactory<,>).MakeGenericType(includePropertySpec.InputPropertyType, includePropertySpec.OutputPropertyType);
                         var factory = (IQueryPipeFactory)Activator.CreateInstance(factoryType);
-                        return factory.TryCreate(specification, out queryPipe);
+                        return factory.TryCreate(specification, out pipe);
                     }
             }
 
-            queryPipe = null;
+            pipe = null;
             return false;
         }
 
-        private class PropertyFactory<TProperty> : IQueryPipeFactory
+        private class RootFactory<TProperty> : IQueryPipeFactory
         {
             public string Name => EntityFrameworkCoreQueryNames.Include;
 
-            public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
+            public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe)
                 where TEntity : class
             {
                 if (specification is IIncludePropertyQuerySpecification<TEntity, TEntity, TProperty> includePropertySpec)
                 {
-                    queryPipe = new IncludePropertyQueryPipe<TEntity, TProperty>(includePropertySpec.NavigationPropertyPath);
+                    pipe = new IncludePropertyRootQueryPipe<TEntity, TProperty>(includePropertySpec.NavigationPropertyPath);
                     return true;
                 }
 
-                queryPipe = null;
+                pipe = null;
                 return false;
             }
         }
@@ -63,16 +63,16 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Factories
         {
             public string Name => EntityFrameworkCoreQueryNames.Include;
 
-            public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
+            public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe)
                 where TEntity : class
             {
                 if (specification is IIncludePropertyQuerySpecification<TEntity, TInputProperty, TOutputProperty> includePropertySpec)
                 {
-                    queryPipe = new IncludePropertyThenQueryPipe<TEntity, TInputProperty, TOutputProperty>(includePropertySpec.NavigationPropertyPath, includePropertySpec.IsEnumerable);
+                    pipe = new IncludePropertyThenQueryPipe<TEntity, TInputProperty, TOutputProperty>(includePropertySpec.NavigationPropertyPath, includePropertySpec.IsEnumerable);
                     return true;
                 }
 
-                queryPipe = null;
+                pipe = null;
                 return false;
             }
         }

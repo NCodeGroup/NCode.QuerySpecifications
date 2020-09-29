@@ -1,11 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using NCode.QuerySpecifications.Configurators;
+using System.ComponentModel;
+using NCode.QuerySpecifications.Configuration;
 using NCode.QuerySpecifications.Specifications;
 
-namespace NCode.QuerySpecifications.Configuration
+namespace NCode.QuerySpecifications.Configurators
 {
-    public class QueryConfiguration<TEntity> : IQueryConfigurator<TEntity>, IQueryConfiguration<TEntity>
+    public interface IQueryConfigurator<TEntity>
+        where TEntity : class
+    {
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        IQueryConfiguration<TEntity> OutputConfiguration { get; }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        void AddSpecification(IQuerySpecification<TEntity> specification);
+    }
+
+    public class QueryConfigurator<TEntity> : IQueryConfigurator<TEntity>, IQueryConfiguration<TEntity>
         where TEntity : class
     {
         private readonly List<IQuerySpecification<TEntity>> _specifications = new List<IQuerySpecification<TEntity>>();

@@ -11,18 +11,20 @@ namespace NCode.QuerySpecifications.Builder.Pipes
         private readonly Expression<Func<TEntity, TProperty>> _keySelector;
         private readonly IComparer<TProperty> _comparer;
         private readonly bool _descending;
+        private readonly bool _isRoot;
 
-        public OrderByQueryPipe(Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer, bool @descending)
+        public OrderByQueryPipe(Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer, bool @descending, bool isRoot)
         {
             _keySelector = keySelector ?? throw new ArgumentNullException(nameof(keySelector));
 
             _comparer = comparer;
             _descending = @descending;
+            _isRoot = isRoot;
         }
 
-        public virtual IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
+        public IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
         {
-            if (queryRoot is IOrderedQueryable<TEntity> orderedQueryable)
+            if (!_isRoot && queryRoot is IOrderedQueryable<TEntity> orderedQueryable)
             {
                 return _descending
                     ? _comparer == null
@@ -40,6 +42,7 @@ namespace NCode.QuerySpecifications.Builder.Pipes
                 : _comparer == null
                     ? queryRoot.OrderBy(_keySelector)
                     : queryRoot.OrderBy(_keySelector, _comparer);
+
         }
 
     }

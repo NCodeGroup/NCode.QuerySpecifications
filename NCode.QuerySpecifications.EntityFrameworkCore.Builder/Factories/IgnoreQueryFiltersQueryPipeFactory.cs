@@ -10,16 +10,16 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Factories
     {
         public string Name => EntityFrameworkCoreQueryNames.IgnoreQueryFilters;
 
-        public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
+        public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe)
             where TEntity : class
         {
             if (specification is IIgnoreQueryFiltersQuerySpecification<TEntity>)
             {
-                queryPipe = new IgnoreQueryFiltersQueryPipe<TEntity>();
+                pipe = new IgnoreQueryFiltersQueryPipe<TEntity>();
                 return true;
             }
 
-            queryPipe = null;
+            pipe = null;
             return false;
         }
 

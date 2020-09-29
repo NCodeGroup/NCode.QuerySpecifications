@@ -7,22 +7,24 @@ using Xunit;
 
 namespace NCode.QuerySpecifications.EntityFrameworkCore.Builder.Tests.Pipes
 {
-	public class AsNoTrackingQueryPipeTests
-	{
-		[Fact]
-		public void Apply_DisablesChangeTracker()
-		{
-			var pipe = new AsNoTrackingQueryPipe<Customer>();
+    public class AsNoTrackingQueryPipeTests
+    {
+        [Fact]
+        public void Apply_DisablesChangeTracker()
+        {
+            var pipe = new AsNoTrackingQueryPipe<Customer>();
 
-			using (var fixture = new NorthwindQueryInMemoryFixture<NoopModelCustomizer>())
-			using (var context = fixture.CreateContext())
-			{
-				var results = pipe.Apply(context.Customers).ToList();
+            using var fixture = new NorthwindQueryInMemoryFixture<NoopModelCustomizer>();
+            using var context = fixture.CreateContext();
 
-				Assert.Equal(91, results.Count);
-				Assert.Empty(context.ChangeTracker.Entries());
-			}
-		}
+            var results = pipe.Apply(context.Customers).ToList();
 
-	}
+            var expectedCount = fixture.QueryAsserter.ExpectedData.Set<Customer>().Count();
+            Assert.NotEqual(0, expectedCount);
+
+            Assert.Equal(expectedCount, results.Count);
+            Assert.Empty(context.ChangeTracker.Entries());
+        }
+
+    }
 }

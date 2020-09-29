@@ -7,16 +7,16 @@ namespace NCode.QuerySpecifications.Builder.Factories
     {
         public string Name => QueryNames.Distinct;
 
-        public virtual bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> queryPipe)
+        public bool TryCreate<TEntity>(IQuerySpecification<TEntity> specification, out IQueryPipe<TEntity> pipe)
             where TEntity : class
         {
             if (specification is IDistinctQuerySpecification<TEntity> distinctSpec)
             {
-                queryPipe = new DistinctQueryPipe<TEntity>(distinctSpec.Comparer);
+                pipe = new DistinctQueryPipe<TEntity>(distinctSpec.Comparer);
                 return true;
             }
 
-            queryPipe = null;
+            pipe = null;
             return false;
         }
 

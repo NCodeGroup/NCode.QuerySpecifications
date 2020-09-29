@@ -15,7 +15,7 @@ namespace NCode.QuerySpecifications.Builder.Transforms
             _selector = selector ?? throw new ArgumentNullException(nameof(selector));
         }
 
-        public virtual IQueryable<TOut> Apply(IQueryable<TIn> queryRoot)
+        public IQueryable<TOut> Apply(IQueryable<TIn> queryRoot)
         {
             return queryRoot.Select(_selector);
         }

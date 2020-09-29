@@ -14,7 +14,7 @@ namespace NCode.QuerySpecifications.Builder.Pipes
             _take = take;
         }
 
-        public virtual IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
+        public IQueryable<TEntity> Apply(IQueryable<TEntity> queryRoot)
         {
             return queryRoot.Skip(_skip).Take(_take);
         }

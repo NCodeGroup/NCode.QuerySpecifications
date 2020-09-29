@@ -19,7 +19,7 @@ namespace NCode.QuerySpecifications.Builder.Transforms
             _transform = transform ?? throw new ArgumentNullException(nameof(transform));
         }
 
-        public virtual IQueryable<TOut> Apply(IQueryable<TIn> queryRoot)
+        public IQueryable<TOut> Apply(IQueryable<TIn> queryRoot)
         {
             var inputQuery = _inputPipe.Apply(queryRoot);
 

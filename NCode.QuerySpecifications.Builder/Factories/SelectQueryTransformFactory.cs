@@ -7,7 +7,7 @@ namespace NCode.QuerySpecifications.Builder.Factories
     {
         public string Name => QueryNames.Select;
 
-        public virtual bool TryCreate<TIn, TOut>(ITransformSpecification<TIn, TOut> specification, out IQueryTransform<TIn, TOut> transform)
+        public bool TryCreate<TIn, TOut>(ITransformSpecification<TIn, TOut> specification, out IQueryTransform<TIn, TOut> transform)
             where TIn : class
             where TOut : class
         {
