@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="NCode.ProjectSettings.Scaffold" Version="1.0.8">
+      <PackageReference Include="NCode.ProjectSettings.Scaffold" Version="1.0.9">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>

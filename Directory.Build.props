@@ -6,7 +6,7 @@
 
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 
-    <VersionCore>0.0.1</VersionCore>
+    <VersionCore>0.0.2</VersionCore>
     <PreRelease>alpha</PreRelease>
 
     <Version Condition="'$(PreRelease)' == ''">$(VersionCore)</Version>
