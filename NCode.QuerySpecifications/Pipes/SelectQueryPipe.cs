@@ -16,25 +16,25 @@
 #endregion
 
 using System;
-using NCode.QuerySpecifications.EntityFrameworkCore.Pipes;
-using NCode.QuerySpecifications.Pipes;
-using NCode.QuerySpecifications.Specifications;
+using System.Linq;
+using System.Linq.Expressions;
 
-namespace NCode.QuerySpecifications.EntityFrameworkCore.Specifications
+namespace NCode.QuerySpecifications.Pipes
 {
-    internal class IncludePathQuerySpecification<T> : IQuerySpecification<T, T>
-        where T : class
+    internal class SelectQueryPipe<TIn, TOut> : IQueryPipe<TIn, TOut>
+        where TIn : class
+        where TOut : class
     {
-        public IncludePathQuerySpecification(string navigationPropertyPath)
+        private readonly Expression<Func<TIn, TOut>> _selector;
+
+        public SelectQueryPipe(Expression<Func<TIn, TOut>> selector)
         {
-            NavigationPropertyPath = navigationPropertyPath ?? throw new ArgumentNullException(nameof(navigationPropertyPath));
+            _selector = selector ?? throw new ArgumentNullException(nameof(selector));
         }
 
-        public string NavigationPropertyPath { get; }
-
-        public IQueryPipe<T, T> Build()
+        public IQueryable<TOut> Apply(IQueryable<TIn> queryRoot)
         {
-            return new IncludePathQueryPipe<T>(NavigationPropertyPath);
+            return queryRoot.Select(_selector);
         }
 
     }

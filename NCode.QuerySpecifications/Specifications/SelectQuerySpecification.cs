@@ -17,17 +17,11 @@
 
 using System;
 using System.Linq.Expressions;
+using NCode.QuerySpecifications.Pipes;
 
 namespace NCode.QuerySpecifications.Specifications
 {
-    public interface ISelectQuerySpecification<TIn, TOut> : IQuerySpecification<TIn, TOut>
-        where TIn : class
-        where TOut : class
-    {
-        Expression<Func<TIn, TOut>> Selector { get; }
-    }
-
-    public class SelectQuerySpecification<TIn, TOut> : ISelectQuerySpecification<TIn, TOut>
+    internal class SelectQuerySpecification<TIn, TOut> : IQuerySpecification<TIn, TOut>
         where TIn : class
         where TOut : class
     {
@@ -36,8 +30,12 @@ namespace NCode.QuerySpecifications.Specifications
             Selector = selector ?? throw new ArgumentNullException(nameof(selector));
         }
 
-        public string Name => QueryNames.Select;
-
         public Expression<Func<TIn, TOut>> Selector { get; }
+
+        public IQueryPipe<TIn, TOut> Build()
+        {
+            return new SelectQueryPipe<TIn, TOut>(Selector);
+        }
+
     }
 }

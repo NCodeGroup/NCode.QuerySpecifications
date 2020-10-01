@@ -16,25 +16,24 @@
 #endregion
 
 using System;
-using NCode.QuerySpecifications.EntityFrameworkCore.Pipes;
-using NCode.QuerySpecifications.Pipes;
-using NCode.QuerySpecifications.Specifications;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace NCode.QuerySpecifications.EntityFrameworkCore.Specifications
+namespace NCode.QuerySpecifications.Pipes
 {
-    internal class IncludePathQuerySpecification<T> : IQuerySpecification<T, T>
+    internal class CompositeQueryPipe<T> : IQueryPipe<T, T>
         where T : class
     {
-        public IncludePathQuerySpecification(string navigationPropertyPath)
+        private readonly IEnumerable<IQueryPipe<T, T>> _pipes;
+
+        public CompositeQueryPipe(IReadOnlyCollection<IQueryPipe<T, T>> pipes)
         {
-            NavigationPropertyPath = navigationPropertyPath ?? throw new ArgumentNullException(nameof(navigationPropertyPath));
+            _pipes = pipes ?? throw new ArgumentNullException(nameof(pipes));
         }
 
-        public string NavigationPropertyPath { get; }
-
-        public IQueryPipe<T, T> Build()
+        public IQueryable<T> Apply(IQueryable<T> queryRoot)
         {
-            return new IncludePathQueryPipe<T>(NavigationPropertyPath);
+            return _pipes.Aggregate(queryRoot, (current, pipe) => pipe.Apply(current));
         }
 
     }

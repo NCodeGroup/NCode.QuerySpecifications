@@ -16,37 +16,38 @@
 #endregion
 
 using System;
-using NCode.QuerySpecifications.Configuration;
 using NCode.QuerySpecifications.Configurators;
+using NCode.QuerySpecifications.Pipes;
 
 namespace NCode.QuerySpecifications
 {
-    public static class Query<TEntity>
-        where TEntity : class
+    public static class Query<TIn>
+        where TIn : class
     {
-        public static IQueryConfiguration<TEntity> Configure(Func<IQueryConfigurator<TEntity>, IQueryConfigurator<TEntity>> configureCallback)
+        public static IQueryPipe<TIn, TIn> Build(Func<IQueryConfigurator<TIn>, IQueryConfigurator<TIn>> configureCallback)
         {
             if (configureCallback == null)
                 throw new ArgumentNullException(nameof(configureCallback));
 
-            var inputConfigurator = new QueryConfigurator<TEntity>();
+            var input = new QueryConfigurator<TIn>();
 
-            var outputConfigurator = configureCallback(inputConfigurator);
+            var output = configureCallback(input);
 
-            return outputConfigurator.OutputConfiguration;
+            return output.Build();
         }
 
-        public static IQueryConfiguration<TEntity, TOut> Configure<TOut>(Func<IQueryConfigurator<TEntity>, IQueryConfigurator<TEntity, TOut>> configureCallback)
+        public static IQueryPipe<TIn, TOut> Build<TOut>(Func<IQueryConfigurator<TIn>, ITransformConfigurator<TIn, TOut>> configureCallback)
             where TOut : class
         {
             if (configureCallback == null)
                 throw new ArgumentNullException(nameof(configureCallback));
 
-            var inputConfigurator = new QueryConfigurator<TEntity>();
+            var input = new QueryConfigurator<TIn>();
 
-            var transformConfigurator = configureCallback(inputConfigurator);
+            var output = configureCallback(input);
 
-            return transformConfigurator.TransformConfiguration;
+            return output.Build();
         }
+
     }
 }

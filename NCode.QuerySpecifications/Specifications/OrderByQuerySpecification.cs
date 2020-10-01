@@ -18,31 +18,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using NCode.QuerySpecifications.Pipes;
 
 namespace NCode.QuerySpecifications.Specifications
 {
-    public interface IOrderByQuerySpecification<TEntity> : IQuerySpecification<TEntity>
-        where TEntity : class
+    internal class OrderByQuerySpecification<T, TProperty> : IQuerySpecification<T, T>
+        where T : class
     {
-        Type PropertyType { get; }
-
-        bool Descending { get; }
-
-        bool IsRoot { get; }
-    }
-
-    public interface IOrderByQuerySpecification<TEntity, TProperty> : IOrderByQuerySpecification<TEntity>
-        where TEntity : class
-    {
-        Expression<Func<TEntity, TProperty>> KeySelector { get; }
-
-        IComparer<TProperty> Comparer { get; }
-    }
-
-    public class OrderByQuerySpecification<TEntity, TProperty> : IOrderByQuerySpecification<TEntity, TProperty>
-        where TEntity : class
-    {
-        public OrderByQuerySpecification(Expression<Func<TEntity, TProperty>> keySelector, IComparer<TProperty> comparer, bool @descending, bool isRoot)
+        public OrderByQuerySpecification(Expression<Func<T, TProperty>> keySelector, IComparer<TProperty> comparer, bool @descending, bool isRoot)
         {
             KeySelector = keySelector ?? throw new ArgumentNullException(nameof(keySelector));
             Comparer = comparer;
@@ -50,16 +33,18 @@ namespace NCode.QuerySpecifications.Specifications
             IsRoot = isRoot;
         }
 
-        public string Name => QueryNames.OrderBy;
-
-        public Type PropertyType => typeof(TProperty);
-
-        public Expression<Func<TEntity, TProperty>> KeySelector { get; }
+        public Expression<Func<T, TProperty>> KeySelector { get; }
 
         public IComparer<TProperty> Comparer { get; }
 
         public bool Descending { get; }
 
         public bool IsRoot { get; }
+
+        public IQueryPipe<T, T> Build()
+        {
+            return new OrderByQueryPipe<T, TProperty>(KeySelector, Comparer, Descending, IsRoot);
+        }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright Preamble
+
 // 
 //    Copyright @ 2020 NCode Group
 // 
@@ -13,78 +14,46 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+
 #endregion
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using NCode.QuerySpecifications.Configuration;
+using System.Linq;
+using NCode.QuerySpecifications.Pipes;
 using NCode.QuerySpecifications.Specifications;
 
 namespace NCode.QuerySpecifications.Configurators
 {
-    public interface IQueryConfigurator<TEntity>
-        where TEntity : class
+    public interface IQueryConfigurator<T> : IQuerySpecification<T, T>
+        where T : class
     {
         [EditorBrowsable(EditorBrowsableState.Never)]
-        IQueryConfiguration<TEntity> OutputConfiguration { get; }
-
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        void AddSpecification(IQuerySpecification<TEntity> specification);
+        void AddSpecification(IQuerySpecification<T, T> specification);
     }
 
-    public interface IQueryConfigurator<TIn, TOut> : IQueryConfigurator<TOut>
-        where TIn : class
-        where TOut : class
+    internal class QueryConfigurator<T> : IQueryConfigurator<T>
+        where T : class
     {
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        IQueryConfiguration<TIn, TOut> TransformConfiguration { get; }
-    }
+        private readonly IList<IQuerySpecification<T, T>> _specifications = new List<IQuerySpecification<T, T>>();
 
-    public class QueryConfigurator<TEntity> : IQueryConfigurator<TEntity>, IQueryConfiguration<TEntity>
-        where TEntity : class
-    {
-        private readonly List<IQuerySpecification<TEntity>> _specifications = new List<IQuerySpecification<TEntity>>();
-
-        public IReadOnlyList<IQuerySpecification<TEntity>> OutputSpecifications => _specifications;
-
-        public IQueryConfiguration<TEntity> OutputConfiguration => this;
-
-        void IQueryConfigurator<TEntity>.AddSpecification(IQuerySpecification<TEntity> specification)
+        public void AddSpecification(IQuerySpecification<T, T> specification)
         {
             if (specification == null)
                 throw new ArgumentNullException(nameof(specification));
 
             _specifications.Add(specification);
         }
-    }
 
-    public class QueryConfigurator<TIn, TOut> : IQueryConfigurator<TIn, TOut>, IQueryConfiguration<TIn, TOut>
-        where TIn : class
-        where TOut : class
-    {
-        private readonly List<IQuerySpecification<TOut>> _outputSpecifications = new List<IQuerySpecification<TOut>>();
-        private readonly IQueryConfigurator<TIn> _parentConfigurator;
-
-        public QueryConfigurator(IQueryConfigurator<TIn> parentConfigurator, IQuerySpecification<TIn, TOut> transformSpecification)
+        public IQueryPipe<T, T> Build()
         {
-            _parentConfigurator = parentConfigurator ?? throw new ArgumentNullException(nameof(parentConfigurator));
-            TransformSpecification = transformSpecification ?? throw new ArgumentNullException(nameof(transformSpecification));
+            if (_specifications.Count == 1)
+                return _specifications[0].Build();
+
+            var pipes = _specifications.Select(specification => specification.Build()).ToList();
+            return new CompositeQueryPipe<T>(pipes);
         }
 
-        public IQuerySpecification<TIn, TOut> TransformSpecification { get; }
-
-        public IReadOnlyList<IQuerySpecification<TIn>> InputSpecifications => _parentConfigurator.OutputConfiguration.OutputSpecifications;
-
-        public IReadOnlyList<IQuerySpecification<TOut>> OutputSpecifications => _outputSpecifications;
-
-        public IQueryConfiguration<TOut> OutputConfiguration => this;
-
-        public IQueryConfiguration<TIn, TOut> TransformConfiguration => this;
-
-        void IQueryConfigurator<TOut>.AddSpecification(IQuerySpecification<TOut> specification)
-        {
-            _outputSpecifications.Add(specification);
-        }
     }
 }

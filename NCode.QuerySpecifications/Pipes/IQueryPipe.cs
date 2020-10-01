@@ -15,27 +15,14 @@
 //    limitations under the License.
 #endregion
 
-using System;
-using NCode.QuerySpecifications.EntityFrameworkCore.Pipes;
-using NCode.QuerySpecifications.Pipes;
-using NCode.QuerySpecifications.Specifications;
+using System.Linq;
 
-namespace NCode.QuerySpecifications.EntityFrameworkCore.Specifications
+namespace NCode.QuerySpecifications.Pipes
 {
-    internal class TagWithQuerySpecification<T> : IQuerySpecification<T, T>
-        where T : class
+    public interface IQueryPipe<in TIn, out TOut>
+        where TIn : class
+        where TOut : class
     {
-        public TagWithQuerySpecification(string tag)
-        {
-            Tag = tag ?? throw new ArgumentNullException(nameof(tag));
-        }
-
-        public string Tag { get; }
-
-        public IQueryPipe<T, T> Build()
-        {
-            return new TagWithQueryPipe<T>(Tag);
-        }
-
+        IQueryable<TOut> Apply(IQueryable<TIn> queryRoot);
     }
 }

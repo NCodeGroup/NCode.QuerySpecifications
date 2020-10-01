@@ -15,26 +15,25 @@
 //    limitations under the License.
 #endregion
 
-using System;
-using NCode.QuerySpecifications.EntityFrameworkCore.Pipes;
-using NCode.QuerySpecifications.Pipes;
-using NCode.QuerySpecifications.Specifications;
+using System.Linq;
 
-namespace NCode.QuerySpecifications.EntityFrameworkCore.Specifications
+namespace NCode.QuerySpecifications.Pipes
 {
-    internal class IncludePathQuerySpecification<T> : IQuerySpecification<T, T>
+    internal class PageQueryPipe<T> : IQueryPipe<T, T>
         where T : class
     {
-        public IncludePathQuerySpecification(string navigationPropertyPath)
+        private readonly int _skip;
+        private readonly int _take;
+
+        public PageQueryPipe(int skip, int take)
         {
-            NavigationPropertyPath = navigationPropertyPath ?? throw new ArgumentNullException(nameof(navigationPropertyPath));
+            _skip = skip;
+            _take = take;
         }
 
-        public string NavigationPropertyPath { get; }
-
-        public IQueryPipe<T, T> Build()
+        public IQueryable<T> Apply(IQueryable<T> queryRoot)
         {
-            return new IncludePathQueryPipe<T>(NavigationPropertyPath);
+            return queryRoot.Skip(_skip).Take(_take);
         }
 
     }

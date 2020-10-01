@@ -15,18 +15,14 @@
 //    limitations under the License.
 #endregion
 
+using NCode.QuerySpecifications.Pipes;
+
 namespace NCode.QuerySpecifications.Specifications
 {
-    public interface IQuerySpecification<TEntity> : IQueryName
-        where TEntity : class
-    {
-        // nothing
-    }
-
-    public interface IQuerySpecification<TIn, TOut> : IQueryName
+    public interface IQuerySpecification<in TIn, out TOut>
         where TIn : class
         where TOut : class
     {
-        // nothing
+        IQueryPipe<TIn, TOut> Build();
     }
 }

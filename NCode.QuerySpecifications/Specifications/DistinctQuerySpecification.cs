@@ -16,25 +16,24 @@
 #endregion
 
 using System.Collections.Generic;
+using NCode.QuerySpecifications.Pipes;
 
 namespace NCode.QuerySpecifications.Specifications
 {
-    public interface IDistinctQuerySpecification<TEntity> : IQuerySpecification<TEntity>
-        where TEntity : class
+    internal class DistinctQuerySpecification<T> : IQuerySpecification<T, T>
+        where T : class
     {
-        IEqualityComparer<TEntity> Comparer { get; }
-    }
-
-    public class DistinctQuerySpecification<TEntity> : IDistinctQuerySpecification<TEntity>
-        where TEntity : class
-    {
-        public DistinctQuerySpecification(IEqualityComparer<TEntity> comparer)
+        public DistinctQuerySpecification(IEqualityComparer<T> comparer)
         {
             Comparer = comparer;
         }
 
-        public string Name => QueryNames.Distinct;
+        public IEqualityComparer<T> Comparer { get; }
 
-        public IEqualityComparer<TEntity> Comparer { get; }
+        public IQueryPipe<T, T> Build()
+        {
+            return new DistinctQueryPipe<T>(Comparer);
+        }
+
     }
 }

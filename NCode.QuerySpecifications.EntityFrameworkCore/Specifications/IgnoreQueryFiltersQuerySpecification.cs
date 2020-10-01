@@ -15,19 +15,19 @@
 //    limitations under the License.
 #endregion
 
+using NCode.QuerySpecifications.EntityFrameworkCore.Pipes;
+using NCode.QuerySpecifications.Pipes;
 using NCode.QuerySpecifications.Specifications;
 
 namespace NCode.QuerySpecifications.EntityFrameworkCore.Specifications
 {
-    public interface IIgnoreQueryFiltersQuerySpecification<TEntity> : IQuerySpecification<TEntity>
-        where TEntity : class
+    internal class IgnoreQueryFiltersQuerySpecification<T> : IQuerySpecification<T, T>
+        where T : class
     {
-        // nothing
-    }
+        public IQueryPipe<T, T> Build()
+        {
+            return new IgnoreQueryFiltersQueryPipe<T>();
+        }
 
-    public class IgnoreQueryFiltersQuerySpecification<TEntity> : IIgnoreQueryFiltersQuerySpecification<TEntity>
-        where TEntity : class
-    {
-        public string Name => EntityFrameworkCoreQueryNames.IgnoreQueryFilters;
     }
 }

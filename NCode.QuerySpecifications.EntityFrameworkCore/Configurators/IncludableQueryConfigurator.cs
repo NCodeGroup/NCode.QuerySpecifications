@@ -16,33 +16,37 @@
 #endregion
 
 using System;
-using NCode.QuerySpecifications.Configuration;
 using NCode.QuerySpecifications.Configurators;
+using NCode.QuerySpecifications.Pipes;
 using NCode.QuerySpecifications.Specifications;
 
 namespace NCode.QuerySpecifications.EntityFrameworkCore.Configurators
 {
-    public interface IIncludableQueryConfigurator<TEntity, TProperty> : IQueryConfigurator<TEntity>
-        where TEntity : class
+    public interface IIncludableQueryConfigurator<T> : IQueryConfigurator<T>
+        where T : class
     {
         // nothing
     }
 
-    public class IncludableQueryConfigurator<TEntity, TProperty> : IIncludableQueryConfigurator<TEntity, TProperty>
-        where TEntity : class
+    internal class IncludableQueryConfigurator<T> : IIncludableQueryConfigurator<T>
+        where T : class
     {
-        private readonly IQueryConfigurator<TEntity> _parentConfigurator;
+        private readonly IQueryConfigurator<T> _parentConfigurator;
 
-        public IncludableQueryConfigurator(IQueryConfigurator<TEntity> parentConfigurator)
+        public IncludableQueryConfigurator(IQueryConfigurator<T> parentConfigurator)
         {
             _parentConfigurator = parentConfigurator ?? throw new ArgumentNullException(nameof(parentConfigurator));
         }
 
-        public IQueryConfiguration<TEntity> OutputConfiguration => _parentConfigurator.OutputConfiguration;
-
-        void IQueryConfigurator<TEntity>.AddSpecification(IQuerySpecification<TEntity> specification)
+        public void AddSpecification(IQuerySpecification<T, T> specification)
         {
             _parentConfigurator.AddSpecification(specification);
         }
+
+        public IQueryPipe<T, T> Build()
+        {
+            return _parentConfigurator.Build();
+        }
+
     }
 }

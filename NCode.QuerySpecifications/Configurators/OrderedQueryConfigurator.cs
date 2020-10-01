@@ -16,32 +16,36 @@
 #endregion
 
 using System;
-using NCode.QuerySpecifications.Configuration;
+using NCode.QuerySpecifications.Pipes;
 using NCode.QuerySpecifications.Specifications;
 
 namespace NCode.QuerySpecifications.Configurators
 {
-    public interface IOrderedQueryConfigurator<TEntity> : IQueryConfigurator<TEntity>
-        where TEntity : class
+    public interface IOrderedQueryConfigurator<T> : IQueryConfigurator<T>
+        where T : class
     {
         // nothing
     }
 
-    public class OrderedQueryConfigurator<TEntity> : IOrderedQueryConfigurator<TEntity>
-        where TEntity : class
+    internal class OrderedQueryConfigurator<T> : IOrderedQueryConfigurator<T>
+        where T : class
     {
-        private readonly IQueryConfigurator<TEntity> _parentConfigurator;
+        private readonly IQueryConfigurator<T> _parentConfigurator;
 
-        public OrderedQueryConfigurator(IQueryConfigurator<TEntity> parentConfigurator)
+        public OrderedQueryConfigurator(IQueryConfigurator<T> parentConfigurator)
         {
             _parentConfigurator = parentConfigurator ?? throw new ArgumentNullException(nameof(parentConfigurator));
         }
 
-        public IQueryConfiguration<TEntity> OutputConfiguration => _parentConfigurator.OutputConfiguration;
-
-        void IQueryConfigurator<TEntity>.AddSpecification(IQuerySpecification<TEntity> specification)
+        public void AddSpecification(IQuerySpecification<T, T> specification)
         {
             _parentConfigurator.AddSpecification(specification);
         }
+
+        public IQueryPipe<T, T> Build()
+        {
+            return _parentConfigurator.Build();
+        }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright Preamble
+
 // 
 //    Copyright @ 2020 NCode Group
 // 
@@ -13,28 +14,29 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+
 #endregion
 
 using System;
-using NCode.QuerySpecifications.EntityFrameworkCore.Pipes;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using NCode.QuerySpecifications.Pipes;
-using NCode.QuerySpecifications.Specifications;
 
-namespace NCode.QuerySpecifications.EntityFrameworkCore.Specifications
+namespace NCode.QuerySpecifications.EntityFrameworkCore.Pipes
 {
-    internal class IncludePathQuerySpecification<T> : IQuerySpecification<T, T>
+    internal class IncludePathQueryPipe<T> : IQueryPipe<T, T>
         where T : class
     {
-        public IncludePathQuerySpecification(string navigationPropertyPath)
+        private readonly string _navigationPropertyPath;
+
+        public IncludePathQueryPipe(string navigationPropertyPath)
         {
-            NavigationPropertyPath = navigationPropertyPath ?? throw new ArgumentNullException(nameof(navigationPropertyPath));
+            _navigationPropertyPath = navigationPropertyPath ?? throw new ArgumentNullException(nameof(navigationPropertyPath));
         }
 
-        public string NavigationPropertyPath { get; }
-
-        public IQueryPipe<T, T> Build()
+        public IQueryable<T> Apply(IQueryable<T> queryRoot)
         {
-            return new IncludePathQueryPipe<T>(NavigationPropertyPath);
+            return queryRoot.Include(_navigationPropertyPath);
         }
 
     }
