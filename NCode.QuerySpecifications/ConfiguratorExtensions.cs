@@ -61,7 +61,7 @@ namespace NCode.QuerySpecifications
 
             const bool isRoot = true;
 
-            var specification = new OrderByQuerySpecification<T, TProperty>(keySelector, comparer, @descending, isRoot);
+            var specification = new OrderByQuerySpecification<T, TProperty>(keySelector, comparer, descending, isRoot);
             configurator.AddSpecification(specification);
 
             var nextConfigurator = new OrderedQueryConfigurator<T>(configurator);
@@ -102,7 +102,7 @@ namespace NCode.QuerySpecifications
 
             const bool isRoot = false;
 
-            var specification = new OrderByQuerySpecification<T, TProperty>(keySelector, comparer, @descending, isRoot);
+            var specification = new OrderByQuerySpecification<T, TProperty>(keySelector, comparer, descending, isRoot);
             configurator.AddSpecification(specification);
 
             return configurator;

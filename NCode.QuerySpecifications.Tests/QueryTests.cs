@@ -15,224 +15,188 @@
 //    limitations under the License.
 #endregion
 
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.TestModels.Northwind;
-using NCode.QuerySpecifications.Pipes;
-using NCode.QuerySpecifications.Specifications;
+using System;
+using System.Linq;
 using Xunit;
 
 namespace NCode.QuerySpecifications.Tests
 {
     public class QueryTests
     {
+        private static readonly IQueryable<string> QueryRoot = new[]
+        {
+            "1",
+            "aa",
+            "AA",
+            "2",
+            "bb",
+            "BB",
+            "3",
+            "cc",
+            "CC",
+            "1",
+            "2",
+            "3",
+        }.AsQueryable();
+
         [Fact]
         public void Build_Where()
         {
-            var query = Query<Order>.Build(config => config
-                .Where(order => order.Freight == 0));
+            var queryPipe = Query<string>.Build(config => config
+                .Where(value => value.Length == 1));
 
-            Assert.IsAssignableFrom<WhereQueryPipe<Order>>(query);
+            var expected = new[] { "1", "2", "3", "1", "2", "3" };
+            var query = queryPipe.Apply(QueryRoot);
+            Assert.Equal(expected, query);
         }
 
         [Fact]
         public void Build_OrderByAscending_WithoutComparer()
         {
-            var query = Query<Order>.Build(config => config
-                .OrderBy(order => order.Freight));
+            var queryPipe = Query<string>.Build(config => config
+                .OrderBy(value => value));
 
-            var orderBySpec = Assert.IsAssignableFrom<OrderByQueryPipe<Order, decimal?>>(query);
-            Assert.False(orderBySpec.Descending);
-            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
-            Assert.Null(orderBySpec.Comparer);
+            var expected = new[] { "1", "1", "2", "2", "3", "3", "aa", "AA", "bb", "BB", "cc", "CC" };
+            var query = queryPipe.Apply(QueryRoot.Reverse());
+            Assert.Equal(expected, query);
         }
 
         [Fact]
         public void Build_OrderByAscending_WithComparer()
         {
-            var query = Query<Order>.Build(config => config
-                .OrderBy(order => order.Freight, Comparer<decimal?>.Default));
+            var queryPipe = Query<string>.Build(config => config
+                .OrderBy(value => value, StringComparer.OrdinalIgnoreCase));
 
-            var spec = Assert.Single(query.Specifications);
-            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec);
-            Assert.False(orderBySpec.Descending);
-            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
-            Assert.Same(Comparer<decimal?>.Default, orderBySpec.Comparer);
+            var expected = new[] { "1", "1", "2", "2", "3", "3", "AA", "aa", "BB", "bb", "CC", "cc" };
+            var query = queryPipe.Apply(QueryRoot.Reverse());
+            Assert.Equal(expected, query);
         }
 
         [Fact]
         public void Build_OrderByDescending_WithoutComparer()
         {
-            var query = Query<Order>.Build(config => config
-                .OrderByDescending(order => order.Freight));
+            var queryPipe = Query<string>.Build(config => config
+                .OrderByDescending(value => value));
 
-            var spec = Assert.Single(query.Specifications);
-            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec);
-            Assert.True(orderBySpec.Descending);
-            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
-            Assert.Null(orderBySpec.Comparer);
+            var expected = new[] { "CC", "cc", "BB", "bb", "AA", "aa", "3", "3", "2", "2", "1", "1" };
+            var query = queryPipe.Apply(QueryRoot.Reverse());
+            Assert.Equal(expected, query);
         }
 
         [Fact]
         public void Build_OrderByDescending_WithComparer()
         {
-            var query = Query<Order>.Build(config => config
-                .OrderByDescending(order => order.Freight, Comparer<decimal?>.Default));
+            var queryPipe = Query<string>.Build(config => config
+                .OrderByDescending(value => value, StringComparer.OrdinalIgnoreCase));
 
-            var spec = Assert.Single(query.Specifications);
-
-            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec);
-            Assert.True(orderBySpec.Descending);
-            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
-            Assert.Same(Comparer<decimal?>.Default, orderBySpec.Comparer);
+            var expected = new[] { "cc", "CC", "bb", "BB", "aa", "AA", "3", "3", "2", "2", "1", "1" };
+            var query = queryPipe.Apply(QueryRoot);
+            Assert.Equal(expected, query);
         }
 
         [Fact]
         public void Build_OrderByAscending_ThenByAscending_WithoutComparer()
         {
-            var query = Query<Order>.Build(config => config
-                .OrderBy(order => order.Freight)
-                .ThenBy(order => order.ShipVia));
+            var queryPipe = Query<string>.Build(config => config
+                .OrderBy(value => value)
+                .ThenBy(value => value));
 
-            Assert.Equal(2, query.Specifications.Count);
-
-            var spec1 = query.Specifications[0];
-            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec1);
-            Assert.False(orderBySpec.Descending);
-            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
-            Assert.Null(orderBySpec.Comparer);
-
-            var spec2 = query.Specifications[1];
-            var thenBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, int?>>(spec2);
-            Assert.False(thenBySpec.Descending);
-            Assert.Equal(typeof(int?), thenBySpec.PropertyType);
-            Assert.Null(thenBySpec.Comparer);
+            var expected = new[] { "1", "1", "2", "2", "3", "3", "aa", "AA", "bb", "BB", "cc", "CC" };
+            var query = queryPipe.Apply(QueryRoot.Reverse());
+            Assert.Equal(expected, query);
         }
 
         [Fact]
         public void Build_OrderByAscending_ThenByAscending_WithComparer()
         {
-            var query = Query<Order>.Build(config => config
-                .OrderBy(order => order.Freight)
-                .ThenBy(order => order.ShipVia, Comparer<int?>.Default));
+            var queryPipe = Query<string>.Build(config => config
+                .OrderBy(value => value)
+                .ThenBy(value => value, StringComparer.OrdinalIgnoreCase));
 
-            Assert.Equal(2, query.Specifications.Count);
-
-            var spec1 = query.Specifications[0];
-            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec1);
-            Assert.False(orderBySpec.Descending);
-            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
-            Assert.Null(orderBySpec.Comparer);
-
-            var spec2 = query.Specifications[1];
-            var thenBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, int?>>(spec2);
-            Assert.False(thenBySpec.Descending);
-            Assert.Equal(typeof(int?), thenBySpec.PropertyType);
-            Assert.Same(Comparer<int?>.Default, thenBySpec.Comparer);
+            var expected = new[] { "1", "1", "2", "2", "3", "3", "aa", "AA", "bb", "BB", "cc", "CC" };
+            var query = queryPipe.Apply(QueryRoot.Reverse());
+            Assert.Equal(expected, query);
         }
 
         [Fact]
         public void Build_OrderByAscending_ThenByDescending_WithoutComparer()
         {
-            var query = Query<Order>.Build(config => config
-                .OrderBy(order => order.Freight)
-                .ThenByDescending(order => order.ShipVia));
+            var queryPipe = Query<string>.Build(config => config
+                .OrderBy(value => value)
+                .ThenByDescending(value => value));
 
-            Assert.Equal(2, query.Specifications.Count);
-
-            var spec1 = query.Specifications[0];
-            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec1);
-            Assert.False(orderBySpec.Descending);
-            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
-            Assert.Null(orderBySpec.Comparer);
-
-            var spec2 = query.Specifications[1];
-            var thenBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, int?>>(spec2);
-            Assert.True(thenBySpec.Descending);
-            Assert.Equal(typeof(int?), thenBySpec.PropertyType);
-            Assert.Null(thenBySpec.Comparer);
+            var expected = new[] { "1", "1", "2", "2", "3", "3", "aa", "AA", "bb", "BB", "cc", "CC" };
+            var query = queryPipe.Apply(QueryRoot.Reverse());
+            Assert.Equal(expected, query);
         }
 
         [Fact]
         public void Build_OrderByAscending_ThenByDescending_WithComparer()
         {
-            var query = Query<Order>.Build(config => config
-                .OrderBy(order => order.Freight)
-                .ThenByDescending(order => order.ShipVia, Comparer<int?>.Default));
+            var queryPipe = Query<string>.Build(config => config
+                .OrderBy(value => value)
+                .ThenByDescending(value => value, StringComparer.OrdinalIgnoreCase));
 
-            Assert.Equal(2, query.Specifications.Count);
-
-            var spec1 = query.Specifications[0];
-            var orderBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, decimal?>>(spec1);
-            Assert.False(orderBySpec.Descending);
-            Assert.Equal(typeof(decimal?), orderBySpec.PropertyType);
-            Assert.Null(orderBySpec.Comparer);
-
-            var spec2 = query.Specifications[1];
-            var thenBySpec = Assert.IsAssignableFrom<IOrderByQuerySpecification<Order, int?>>(spec2);
-            Assert.True(thenBySpec.Descending);
-            Assert.Equal(typeof(int?), thenBySpec.PropertyType);
-            Assert.Same(Comparer<int?>.Default, thenBySpec.Comparer);
+            var expected = new[] { "1", "1", "2", "2", "3", "3", "aa", "AA", "bb", "BB", "cc", "CC" };
+            var query = queryPipe.Apply(QueryRoot);
+            Assert.Equal(expected, query);
         }
 
         [Fact]
         public void Build_Page()
         {
-            var query = Query<Order>.Build(config => config
-                .Page(5, 10));
+            var queryPipe = Query<string>.Build(config => config
+                .Page(2, 2));
 
-            var spec = Assert.Single(query.Specifications);
-            var pageSpec = Assert.IsAssignableFrom<IPageQuerySpecification<Order>>(spec);
-            Assert.Equal(5, pageSpec.Skip);
-            Assert.Equal(10, pageSpec.Take);
+            var expected = new[] { "AA", "2" };
+            var query = queryPipe.Apply(QueryRoot);
+            Assert.Equal(expected, query);
         }
 
         [Fact]
         public void Build_Distinct_WithoutComparer()
         {
-            var query = Query<Order>.Build(config => config
+            var queryPipe = Query<string>.Build(config => config
                 .Distinct());
 
-            var spec = Assert.Single(query.Specifications);
-            var distinctSpec = Assert.IsAssignableFrom<IDistinctQuerySpecification<Order>>(spec);
-            Assert.Null(distinctSpec.Comparer);
+            var expected = new[] { "1", "aa", "AA", "2", "bb", "BB", "3", "cc", "CC" };
+            var query = queryPipe.Apply(QueryRoot);
+            Assert.Equal(expected, query);
         }
 
         [Fact]
         public void Build_Distinct_WithComparer()
         {
-            var query = Query<Order>.Build(config => config
-                .Distinct(EqualityComparer<Order>.Default));
+            var queryPipe = Query<string>.Build(config => config
+                .Distinct(StringComparer.OrdinalIgnoreCase));
 
-            var spec = Assert.Single(query.Specifications);
-            var distinctSpec = Assert.IsAssignableFrom<IDistinctQuerySpecification<Order>>(spec);
-            Assert.Same(EqualityComparer<Order>.Default, distinctSpec.Comparer);
+            var expected = new[] { "1", "aa", "2", "bb", "3", "cc" };
+            var query = queryPipe.Apply(QueryRoot);
+            Assert.Equal(expected, query);
         }
 
         [Fact]
         public void Build_Select_WithoutInputSpecs_WithoutOutputSpecs()
         {
-            var query = Query<Order>.Build(config => config
-                .Select(order => order.Customer));
+            var queryPipe = Query<string>.Build(config => config
+                .Select(value => value.ToUpperInvariant()));
 
-            Assert.Empty(query.InputSpecifications);
-            Assert.Empty(query.OutputSpecifications);
-
-            Assert.IsAssignableFrom<ISelectQuerySpecification<Order, Customer>>(query.TransformSpecification);
+            var expected = new[] { "1", "AA", "AA", "2", "BB", "BB", "3", "CC", "CC", "1", "2", "3" };
+            var query = queryPipe.Apply(QueryRoot);
+            Assert.Equal(expected, query);
         }
 
         [Fact]
         public void Build_Select_WithInputSpecs_WithOutputSpecs()
         {
-            var query = Query<Order>.Build(config => config
-                .Where(order => order.Freight == 0)
-                .OrderBy(order => order.OrderDate)
-                .Select(order => order.Customer)
-                .Output(output => output.Distinct().OrderBy(customer => customer.Country).ThenBy(customer => customer.CompanyName)));
+            var queryPipe = Query<string>.Build(config => config
+                .Where(value => value.Length > 1)
+                .Select(value => value.ToUpperInvariant())
+                .Output(output => output.Distinct()));
 
-            Assert.Equal(2, query.InputSpecifications.Count);
-            Assert.Equal(3, query.OutputSpecifications.Count);
-
-            Assert.IsAssignableFrom<ISelectQuerySpecification<Order, Customer>>(query.TransformSpecification);
+            var expected = new[] { "AA", "BB", "CC" };
+            var query = queryPipe.Apply(QueryRoot);
+            Assert.Equal(expected, query);
         }
 
     }

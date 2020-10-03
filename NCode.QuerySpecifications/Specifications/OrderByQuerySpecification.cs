@@ -25,11 +25,11 @@ namespace NCode.QuerySpecifications.Specifications
     internal class OrderByQuerySpecification<T, TProperty> : IQuerySpecification<T, T>
         where T : class
     {
-        public OrderByQuerySpecification(Expression<Func<T, TProperty>> keySelector, IComparer<TProperty> comparer, bool @descending, bool isRoot)
+        public OrderByQuerySpecification(Expression<Func<T, TProperty>> keySelector, IComparer<TProperty> comparer, bool descending, bool isRoot)
         {
             KeySelector = keySelector ?? throw new ArgumentNullException(nameof(keySelector));
             Comparer = comparer;
-            Descending = @descending;
+            Descending = descending;
             IsRoot = isRoot;
         }
 
