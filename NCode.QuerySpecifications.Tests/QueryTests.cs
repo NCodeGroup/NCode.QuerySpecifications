@@ -17,12 +17,17 @@
 
 using System;
 using System.Linq;
+using Moq;
+using NCode.QuerySpecifications.Pipes;
+using NCode.QuerySpecifications.Specifications;
 using Xunit;
 
 namespace NCode.QuerySpecifications.Tests
 {
-    public class QueryTests
+    public class QueryTests : IDisposable
     {
+        private readonly MockRepository _mockRepository;
+
         private static readonly IQueryable<string> QueryRoot = new[]
         {
             "1",
@@ -38,6 +43,96 @@ namespace NCode.QuerySpecifications.Tests
             "2",
             "3",
         }.AsQueryable();
+
+        public QueryTests()
+        {
+            _mockRepository = new MockRepository(MockBehavior.Strict);
+        }
+
+        public void Dispose()
+        {
+            _mockRepository.Verify();
+        }
+
+        [Fact]
+        public void Build_UseQuerySpecification()
+        {
+            var mockQueryPipe = _mockRepository.Create<IQueryPipe<string, string>>();
+            var mockQuerySpecification = _mockRepository.Create<IQuerySpecification<string, string>>();
+
+            mockQueryPipe
+                .Setup(_ => _.Apply(QueryRoot))
+                .Returns(QueryRoot)
+                .Verifiable();
+
+            mockQuerySpecification
+                .Setup(_ => _.Build())
+                .Returns(mockQueryPipe.Object)
+                .Verifiable();
+
+            var queryPipe = Query<string>.Build(config => config
+                .UseQuerySpecification(mockQuerySpecification.Object));
+
+            var query = queryPipe.Apply(QueryRoot);
+            Assert.Equal(QueryRoot, query);
+        }
+
+        [Fact]
+        public void Build_UseTransformSpecification()
+        {
+            var mockQueryPipe = _mockRepository.Create<IQueryPipe<string, string>>();
+            var mockQuerySpecification = _mockRepository.Create<IQuerySpecification<string, string>>();
+
+            mockQueryPipe
+                .Setup(_ => _.Apply(QueryRoot))
+                .Returns(QueryRoot)
+                .Verifiable();
+
+            mockQuerySpecification
+                .Setup(_ => _.Build())
+                .Returns(mockQueryPipe.Object)
+                .Verifiable();
+
+            var queryPipe = Query<string>.Build(config => config
+                .UseTransformSpecification(mockQuerySpecification.Object));
+
+            var query = queryPipe.Apply(QueryRoot);
+            Assert.Equal(QueryRoot, query);
+        }
+
+        [Fact]
+        public void Build_UseQuery()
+        {
+            var mockQueryPipe = _mockRepository.Create<IQueryPipe<string, string>>();
+
+            mockQueryPipe
+                .Setup(_ => _.Apply(QueryRoot))
+                .Returns(QueryRoot)
+                .Verifiable();
+
+            var queryPipe = Query<string>.Build(config => config
+                .UseQuery(mockQueryPipe.Object));
+
+            var query = queryPipe.Apply(QueryRoot);
+            Assert.Equal(QueryRoot, query);
+        }
+
+        [Fact]
+        public void Build_UseTransform()
+        {
+            var mockQueryPipe = _mockRepository.Create<IQueryPipe<string, string>>();
+
+            mockQueryPipe
+                .Setup(_ => _.Apply(QueryRoot))
+                .Returns(QueryRoot)
+                .Verifiable();
+
+            var queryPipe = Query<string>.Build(config => config
+                .UseTransform(mockQueryPipe.Object));
+
+            var query = queryPipe.Apply(QueryRoot);
+            Assert.Equal(QueryRoot, query);
+        }
 
         [Fact]
         public void Build_Where()

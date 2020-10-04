@@ -19,12 +19,69 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using NCode.QuerySpecifications.Configurators;
+using NCode.QuerySpecifications.Pipes;
 using NCode.QuerySpecifications.Specifications;
 
 namespace NCode.QuerySpecifications
 {
     public static class ConfiguratorExtensions
     {
+        public static IQueryConfigurator<T> UseQuerySpecification<T>(this IQueryConfigurator<T> configurator, IQuerySpecification<T, T> querySpecification)
+            where T : class
+        {
+            if (configurator == null)
+                throw new ArgumentNullException(nameof(configurator));
+            if (configurator == null)
+                throw new ArgumentNullException(nameof(querySpecification));
+
+            configurator.AddSpecification(querySpecification);
+
+            return configurator;
+        }
+
+        public static ITransformConfigurator<TIn, TOut> UseTransformSpecification<TIn, TOut>(this IQueryConfigurator<TIn> configurator, IQuerySpecification<TIn, TOut> transformSpecification)
+            where TIn : class
+            where TOut : class
+        {
+            if (configurator == null)
+                throw new ArgumentNullException(nameof(configurator));
+            if (transformSpecification == null)
+                throw new ArgumentNullException(nameof(transformSpecification));
+
+            var nextConfigurator = new TransformConfigurator<TIn, TOut>(transformSpecification, configurator);
+
+            return nextConfigurator;
+        }
+
+        public static IQueryConfigurator<T> UseQuery<T>(this IQueryConfigurator<T> configurator, IQueryPipe<T, T> queryPipe)
+            where T : class
+        {
+            if (configurator == null)
+                throw new ArgumentNullException(nameof(configurator));
+            if (queryPipe == null)
+                throw new ArgumentNullException(nameof(queryPipe));
+
+            var specification = new PipeQuerySpecification<T>(queryPipe);
+            configurator.AddSpecification(specification);
+
+            return configurator;
+        }
+
+        public static ITransformConfigurator<TIn, TOut> UseTransform<TIn, TOut>(this IQueryConfigurator<TIn> configurator, IQueryPipe<TIn, TOut> transformPipe)
+            where TIn : class
+            where TOut : class
+        {
+            if (configurator == null)
+                throw new ArgumentNullException(nameof(configurator));
+            if (transformPipe == null)
+                throw new ArgumentNullException(nameof(transformPipe));
+
+            var transformSpecification = new TransformQuerySpecification<TIn, TOut>(transformPipe);
+            var nextConfigurator = new TransformConfigurator<TIn, TOut>(transformSpecification, configurator);
+
+            return nextConfigurator;
+        }
+
         public static IQueryConfigurator<T> Where<T>(this IQueryConfigurator<T> configurator, Expression<Func<T, bool>> predicate)
             where T : class
         {
