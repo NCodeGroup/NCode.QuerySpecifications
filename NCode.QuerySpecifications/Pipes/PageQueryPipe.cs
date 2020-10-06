@@ -16,6 +16,7 @@
 #endregion
 
 using System.Linq;
+using NCode.QuerySpecifications.Introspection;
 
 namespace NCode.QuerySpecifications.Pipes
 {
@@ -34,6 +35,14 @@ namespace NCode.QuerySpecifications.Pipes
         public IQueryable<T> Apply(IQueryable<T> queryRoot)
         {
             return queryRoot.Skip(_skip).Take(_take);
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("page");
+
+            scope.Add("skip", _skip);
+            scope.Add("take", _take);
         }
 
     }

@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using NCode.QuerySpecifications.Introspection;
 using NCode.QuerySpecifications.Pipes;
 
 namespace NCode.QuerySpecifications.Specifications
@@ -44,6 +45,16 @@ namespace NCode.QuerySpecifications.Specifications
         public IQueryPipe<T, T> Build()
         {
             return new OrderByQueryPipe<T, TProperty>(KeySelector, Comparer, Descending, IsRoot);
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("orderBy");
+
+            scope.Add("keySelector", KeySelector.ToString());
+            scope.Add("comparerType", Comparer?.GetType());
+            scope.Add("descending", Descending);
+            scope.Add("isRoot", IsRoot);
         }
 
     }

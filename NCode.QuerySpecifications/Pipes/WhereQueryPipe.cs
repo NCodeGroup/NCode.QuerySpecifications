@@ -18,6 +18,7 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using NCode.QuerySpecifications.Introspection;
 
 namespace NCode.QuerySpecifications.Pipes
 {
@@ -34,6 +35,13 @@ namespace NCode.QuerySpecifications.Pipes
         public IQueryable<T> Apply(IQueryable<T> queryRoot)
         {
             return queryRoot.Where(_predicate);
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("where");
+
+            scope.Add("predicate", _predicate.ToString());
         }
 
     }

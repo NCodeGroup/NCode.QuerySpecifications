@@ -17,6 +17,7 @@
 
 using System;
 using NCode.QuerySpecifications.EntityFrameworkCore.Pipes;
+using NCode.QuerySpecifications.Introspection;
 using NCode.QuerySpecifications.Pipes;
 using NCode.QuerySpecifications.Specifications;
 
@@ -35,6 +36,13 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Specifications
         public IQueryPipe<T, T> Build()
         {
             return new TagWithQueryPipe<T>(Tag);
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("tagWith");
+
+            scope.Add("tag", Tag);
         }
 
     }

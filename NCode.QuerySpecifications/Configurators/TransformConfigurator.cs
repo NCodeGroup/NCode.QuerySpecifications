@@ -17,6 +17,7 @@
 
 using System;
 using System.ComponentModel;
+using NCode.QuerySpecifications.Introspection;
 using NCode.QuerySpecifications.Pipes;
 using NCode.QuerySpecifications.Specifications;
 
@@ -54,6 +55,18 @@ namespace NCode.QuerySpecifications.Configurators
             var transformPipe = TransformSpecification.Build();
 
             return new CompositeQueryTransform<TIn, TOut>(inputPipe, outputPipe, transformPipe);
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("transformConfigurator");
+
+            scope.Add("inputType", typeof(TIn));
+            scope.Add("outputType", typeof(TOut));
+
+            InputConfigurator.Probe(scope);
+            TransformSpecification.Probe(scope);
+            OutputConfigurator.Probe(scope);
         }
 
     }

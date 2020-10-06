@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using NCode.QuerySpecifications.Introspection;
 using NCode.QuerySpecifications.Pipes;
 using NCode.QuerySpecifications.Specifications;
 
@@ -53,6 +54,19 @@ namespace NCode.QuerySpecifications.Configurators
 
             var pipes = _specifications.Select(specification => specification.Build()).ToList();
             return new CompositeQueryPipe<T>(pipes);
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("queryConfigurator");
+
+            scope.Add("inputType", typeof(T));
+            scope.Add("count", _specifications.Count);
+
+            foreach (var specification in _specifications)
+            {
+                specification.Probe(scope);
+            }
         }
 
     }

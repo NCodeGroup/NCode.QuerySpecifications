@@ -17,6 +17,7 @@
 
 using System;
 using System.Linq;
+using NCode.QuerySpecifications.Introspection;
 
 namespace NCode.QuerySpecifications.Pipes
 {
@@ -44,6 +45,15 @@ namespace NCode.QuerySpecifications.Pipes
             var outputQuery = _outputPipe.Apply(transformQuery);
 
             return outputQuery;
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("compositeTransform");
+
+            _inputPipe.Probe(scope);
+            _transformPipe.Probe(scope);
+            _outputPipe.Probe(scope);
         }
 
     }

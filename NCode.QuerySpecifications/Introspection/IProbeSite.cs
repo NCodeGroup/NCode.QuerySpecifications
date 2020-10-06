@@ -1,4 +1,5 @@
 ﻿#region Copyright Preamble
+
 // 
 //    Copyright @ 2020 NCode Group
 // 
@@ -13,17 +14,13 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+
 #endregion
 
-using System.Linq;
-using NCode.QuerySpecifications.Introspection;
-
-namespace NCode.QuerySpecifications.Pipes
+namespace NCode.QuerySpecifications.Introspection
 {
-    public interface IQueryPipe<in TIn, out TOut> : IProbeSite
-        where TIn : class
-        where TOut : class
+    public interface IProbeSite
     {
-        IQueryable<TOut> Apply(IQueryable<TIn> queryRoot);
+        void Probe(IProbeContext context);
     }
 }

@@ -20,6 +20,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using NCode.QuerySpecifications.Introspection;
 using NCode.QuerySpecifications.Pipes;
 
 namespace NCode.QuerySpecifications.EntityFrameworkCore.Pipes
@@ -38,6 +39,13 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Pipes
         {
             var query = (IIncludableQueryable<T, TInputProperty>)queryRoot;
             return query.ThenInclude(_navigationPropertyPath);
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("includePropertyThen");
+
+            scope.Add("navigationPropertyPath", _navigationPropertyPath.ToString());
         }
 
     }

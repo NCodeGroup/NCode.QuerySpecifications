@@ -15,6 +15,7 @@
 //    limitations under the License.
 #endregion
 
+using NCode.QuerySpecifications.Introspection;
 using NCode.QuerySpecifications.Pipes;
 
 namespace NCode.QuerySpecifications.Specifications
@@ -35,6 +36,14 @@ namespace NCode.QuerySpecifications.Specifications
         public IQueryPipe<T, T> Build()
         {
             return new PageQueryPipe<T>(Skip, Take);
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("page");
+
+            scope.Add("skip", Skip);
+            scope.Add("take", Take);
         }
 
     }

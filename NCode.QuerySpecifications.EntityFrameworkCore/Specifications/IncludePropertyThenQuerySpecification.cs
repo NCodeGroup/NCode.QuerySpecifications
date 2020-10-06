@@ -18,6 +18,7 @@
 using System;
 using System.Linq.Expressions;
 using NCode.QuerySpecifications.EntityFrameworkCore.Pipes;
+using NCode.QuerySpecifications.Introspection;
 using NCode.QuerySpecifications.Pipes;
 using NCode.QuerySpecifications.Specifications;
 
@@ -36,6 +37,13 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Specifications
         public IQueryPipe<T, T> Build()
         {
             return new IncludePropertyThenQueryPipe<T, TInputProperty, TOutputProperty>(NavigationPropertyPath);
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("includePropertyThen");
+
+            scope.Add("navigationPropertyPath", NavigationPropertyPath.ToString());
         }
 
     }

@@ -17,6 +17,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using NCode.QuerySpecifications.Introspection;
 
 namespace NCode.QuerySpecifications.Pipes
 {
@@ -35,6 +36,13 @@ namespace NCode.QuerySpecifications.Pipes
             return _comparer == null
                 ? queryRoot.Distinct()
                 : queryRoot.Distinct(_comparer);
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("distinct");
+
+            scope.Add("comparerType", _comparer?.GetType());
         }
 
     }

@@ -18,6 +18,7 @@
 #endregion
 
 using System;
+using NCode.QuerySpecifications.Introspection;
 using NCode.QuerySpecifications.Pipes;
 
 namespace NCode.QuerySpecifications.Specifications
@@ -35,6 +36,13 @@ namespace NCode.QuerySpecifications.Specifications
         public IQueryPipe<T, T> Build()
         {
             return QueryPipe;
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("queryPipe");
+
+            QueryPipe.Probe(scope);
         }
 
     }

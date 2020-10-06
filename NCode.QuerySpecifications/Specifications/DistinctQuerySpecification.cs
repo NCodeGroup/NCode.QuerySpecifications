@@ -16,6 +16,7 @@
 #endregion
 
 using System.Collections.Generic;
+using NCode.QuerySpecifications.Introspection;
 using NCode.QuerySpecifications.Pipes;
 
 namespace NCode.QuerySpecifications.Specifications
@@ -33,6 +34,13 @@ namespace NCode.QuerySpecifications.Specifications
         public IQueryPipe<T, T> Build()
         {
             return new DistinctQueryPipe<T>(Comparer);
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("distinct");
+
+            scope.Add("comparerType", Comparer?.GetType());
         }
 
     }

@@ -15,11 +15,12 @@
 //    limitations under the License.
 #endregion
 
+using NCode.QuerySpecifications.Introspection;
 using NCode.QuerySpecifications.Pipes;
 
 namespace NCode.QuerySpecifications.Specifications
 {
-    public interface IQuerySpecification<in TIn, out TOut>
+    public interface IQuerySpecification<in TIn, out TOut> : IProbeSite
         where TIn : class
         where TOut : class
     {

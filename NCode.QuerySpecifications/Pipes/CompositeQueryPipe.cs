@@ -18,13 +18,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NCode.QuerySpecifications.Introspection;
 
 namespace NCode.QuerySpecifications.Pipes
 {
     internal class CompositeQueryPipe<T> : IQueryPipe<T, T>
         where T : class
     {
-        private readonly IEnumerable<IQueryPipe<T, T>> _pipes;
+        private readonly IReadOnlyCollection<IQueryPipe<T, T>> _pipes;
 
         public CompositeQueryPipe(IReadOnlyCollection<IQueryPipe<T, T>> pipes)
         {
@@ -34,6 +35,18 @@ namespace NCode.QuerySpecifications.Pipes
         public IQueryable<T> Apply(IQueryable<T> queryRoot)
         {
             return _pipes.Aggregate(queryRoot, (current, pipe) => pipe.Apply(current));
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("compositeQuery");
+
+            scope.Add("count", _pipes.Count);
+
+            foreach (var pipe in _pipes)
+            {
+                pipe.Probe(scope);
+            }
         }
 
     }

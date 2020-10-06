@@ -18,6 +18,7 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using NCode.QuerySpecifications.Introspection;
 
 namespace NCode.QuerySpecifications.Pipes
 {
@@ -35,6 +36,13 @@ namespace NCode.QuerySpecifications.Pipes
         public IQueryable<TOut> Apply(IQueryable<TIn> queryRoot)
         {
             return queryRoot.Select(_selector);
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("select");
+
+            scope.Add("selector", _selector.ToString());
         }
 
     }

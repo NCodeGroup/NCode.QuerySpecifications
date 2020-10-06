@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using NCode.QuerySpecifications.Introspection;
 
 namespace NCode.QuerySpecifications.Pipes
 {
@@ -60,6 +61,15 @@ namespace NCode.QuerySpecifications.Pipes
                     ? queryRoot.OrderBy(_keySelector)
                     : queryRoot.OrderBy(_keySelector, _comparer);
 
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("orderBy");
+
+            scope.Add("comparerType", _comparer?.GetType());
+            scope.Add("descending", _descending);
+            scope.Add("isRoot", _isRoot);
         }
 
     }

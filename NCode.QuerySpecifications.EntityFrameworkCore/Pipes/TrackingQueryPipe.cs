@@ -17,6 +17,7 @@
 
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using NCode.QuerySpecifications.Introspection;
 using NCode.QuerySpecifications.Pipes;
 
 namespace NCode.QuerySpecifications.EntityFrameworkCore.Pipes
@@ -34,6 +35,13 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Pipes
         public IQueryable<T> Apply(IQueryable<T> queryRoot)
         {
             return queryRoot.AsTracking(_queryTrackingBehavior);
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("tracking");
+
+            scope.Add("queryTrackingBehavior", _queryTrackingBehavior);
         }
 
     }

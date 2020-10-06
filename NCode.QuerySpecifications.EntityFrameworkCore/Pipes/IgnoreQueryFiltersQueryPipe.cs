@@ -17,6 +17,7 @@
 
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using NCode.QuerySpecifications.Introspection;
 using NCode.QuerySpecifications.Pipes;
 
 namespace NCode.QuerySpecifications.EntityFrameworkCore.Pipes
@@ -27,6 +28,11 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Pipes
         public IQueryable<T> Apply(IQueryable<T> queryRoot)
         {
             return queryRoot.IgnoreQueryFilters();
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            context.CreateScope("IgnoreQueryFilters");
         }
 
     }

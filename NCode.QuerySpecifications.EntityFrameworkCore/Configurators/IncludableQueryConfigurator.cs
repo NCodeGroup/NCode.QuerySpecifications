@@ -17,6 +17,7 @@
 
 using System;
 using NCode.QuerySpecifications.Configurators;
+using NCode.QuerySpecifications.Introspection;
 using NCode.QuerySpecifications.Pipes;
 using NCode.QuerySpecifications.Specifications;
 
@@ -46,6 +47,11 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Configurators
         public IQueryPipe<T, T> Build()
         {
             return _parentConfigurator.Build();
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            _parentConfigurator.Probe(context);
         }
 
     }

@@ -20,6 +20,7 @@
 using System;
 using System.Linq.Expressions;
 using NCode.QuerySpecifications.EntityFrameworkCore.Pipes;
+using NCode.QuerySpecifications.Introspection;
 using NCode.QuerySpecifications.Pipes;
 using NCode.QuerySpecifications.Specifications;
 
@@ -38,6 +39,13 @@ namespace NCode.QuerySpecifications.EntityFrameworkCore.Specifications
         public IQueryPipe<T, T> Build()
         {
             return new IncludePropertyRootQueryPipe<T, TProperty>(NavigationPropertyPath);
+        }
+
+        public void Probe(IProbeContext context)
+        {
+            var scope = context.CreateScope("includePropertyRoot");
+
+            scope.Add("navigationPropertyPath", NavigationPropertyPath.ToString());
         }
 
     }
